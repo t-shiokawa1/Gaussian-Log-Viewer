@@ -485,6 +485,7 @@ html:not(.has-file) .main-grid{grid-template-columns:minmax(0,1fr)}
 .jcur3d-bar .set-seg{flex:0 0 auto}
 .jcur3d-bar .set-seg .seg-btn{flex:0 0 auto;padding:0 10px}   /* .seg-btn の既定 flex:1 だと名前が切れる */
 .jcur3d-bar .jb-val{flex:0 0 auto;min-width:3.4em}
+.jcur3d-bar .set-toggle-row{width:auto;margin:0}   /* ver31: 入/切の行はバーの中では中身の幅で */
 .esp-cbar{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2)}
 .esp-cbar .esp-bar{flex:1;height:12px;border-radius:2px;border:1px solid var(--border2)}
 .esp-cap{font-size:11px;color:var(--text3);text-align:center;margin-top:3px}
@@ -960,10 +961,27 @@ html:not(.has-file) .main-grid{grid-template-columns:minmax(0,1fr)}
 .nics-point-options label{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer}
 .nics-point-options input[type=checkbox]{accent-color:var(--accent)}
 .nics-slider-field{display:flex;align-items:center;gap:var(--btn-gap);min-width:0;height:var(--btn-h)}
-.nics-slider-field .range-sub{flex:1;min-width:40px;max-width:none}
+.nics-slider-field .range-sub{flex:1;min-width:40px}   /* ver31: 上限（.range-sub の 240px）を外していたので、右パネルを広げると幅いっぱいまで伸びていた */
 .nics-slider-field .ui-field{flex:0 0 76px;width:76px}
 #gjf-nics-coords{width:100%;min-height:90px;font-family:var(--font-num)}
 .gjf-preview{width:100%;height:160px;resize:vertical}   /* ver26: 見た目は .code-box */
+/* ver31: 作成タブは右パネルが 640px 以上なら2列（左＝計算条件・続けて計算／右＝引用文献・書き出し）。条件を変えると、すぐ横の
+   プレビューが変わる。狭いときは今までどおり1列で、カードの間の線も同じ。列の箱は setupTabs() が作る。
+   構造最適化のカード（#opt-anim-card）と同じコンテナクエリ。比較は design/nics-sheet-create-comparison.html の 2 の案A */
+#pane-create{container-type:inline-size}
+.create-cols{display:flex;flex-direction:column;gap:14px}
+.create-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tab-body .create-col:first-child > .panel-card:last-child{border-bottom:1px solid var(--border);padding-bottom:14px}
+@container (min-width:640px){
+  .create-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;align-items:stretch}
+  .tab-body .create-col:first-child > .panel-card:last-child{border-bottom:none;padding-bottom:0}
+  .create-col + .create-col{border-left:1px solid var(--border);padding-left:24px}
+  /* 書き出しのプレビューは右の列の残りの高さまで伸ばす */
+  #gjf-out-card{flex:1;display:flex;flex-direction:column}
+  #gjf-out-card > .modal-form-row{flex:1;display:flex}
+  #gjf-out-card .form-group{flex:1;display:flex;flex-direction:column}
+  #gjf-out-card .gjf-preview{flex:1;height:auto;min-height:160px}
+}
 /* ver10: native TD-DFT spectrum tab */
 .spec-controls{display:grid;grid-template-columns:repeat(3,minmax(76px,1fr));gap:7px;flex:1}
 .spec-field{display:flex;flex-direction:column;gap:3px;font-size:10px;color:var(--text3);font-family:var(--font-sans)}
@@ -1329,6 +1347,9 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
 #orbital-card .mo-box{height:max(242px, calc(100dvh - 230px))}
 #nics-settings-dialog{width:480px}
 #nics-settings-dialog .orb-row{flex-wrap:wrap}
+#jcur-settings-dialog,#jcur-3d-settings-dialog{width:480px}   /* ver31: 環電流の表示設定（NICS と同じ） */
+#jcur-settings-dialog .orb-row,#jcur-3d-settings-dialog .orb-row{flex-wrap:wrap}
+#jcur-settings-dialog .orb-row+.orb-row,#jcur-3d-settings-dialog .orb-row+.orb-row{margin-top:var(--btn-gap)}
 #orb-settings-dialog{width:440px}
 #orb-settings-dialog .orb-row{flex-wrap:wrap}
 #orb-settings-dialog .orb-row>input[type=range]{min-width:80px}
@@ -1592,7 +1613,7 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
         <!-- ver22: --Link1-- で複数ジョブが続くログのジョブ切り替え。中身は renderJobBand() が書く。
              ジョブが1つのログでは出さない -->
         <div class="job-band" id="job-band" hidden><span class="job-band-k" id="job-band-label">ジョブ</span><div class="set-seg job-seg" id="job-seg" role="group"></div></div>
-        <div class="viewer-image-actions"><button class="small-btn ui-secondary" onclick="toggleCapturePanel()" aria-haspopup="dialog"><svg class="ui-icon"><use href="#ui-download"/></svg><span id="viewer-image-save-label">画像の保存</span></button><button id="nics-3d-settings-btn" class="small-btn ui-secondary" type="button" onclick="openNics3DSettings()" aria-haspopup="dialog" style="display:none"><svg class="ui-icon"><use href="#ui-settings"/></svg><span id="nics-3d-settings-label">設定</span></button><button class="small-btn ui-secondary" onclick="copyViewerImage()"><svg class="ui-icon"><use href="#ui-clipboard"/></svg><span id="viewer-image-copy-label">コピー</span></button></div>
+        <div class="viewer-image-actions"><button class="small-btn ui-secondary" onclick="toggleCapturePanel()" aria-haspopup="dialog"><svg class="ui-icon"><use href="#ui-download"/></svg><span id="viewer-image-save-label">画像の保存</span></button><button id="nics-3d-settings-btn" class="small-btn ui-secondary" type="button" onclick="openViewer3DSettings()" aria-haspopup="dialog" style="display:none"><svg class="ui-icon"><use href="#ui-settings"/></svg><span id="nics-3d-settings-label">設定</span></button><button class="small-btn ui-secondary" onclick="copyViewerImage()"><svg class="ui-icon"><use href="#ui-clipboard"/></svg><span id="viewer-image-copy-label">コピー</span></button></div>
         <canvas id="viewer-canvas"></canvas>
 
         <!-- ver13: 見た目の設定は「設定」タブ（右パネル）へ移した。ここに残すのは
@@ -2302,22 +2323,24 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
           <!-- ver31: NICS。平らな 3〜8 員環の中心（NICS(0)）と、面から 1 Å（NICS(1)）にゴースト原子 Bq を置く。
                計算タイプが nics のときだけ出す。環の数と Bq の数は #gjf-nics-info に出す（updateGJFPreview()） -->
           <div id="gjf-nics-box" style="display:none">
-            <div class="form-irow"><label for="gjf-nics-mode">配置</label><select class="ui-field form-select" id="gjf-nics-mode" oninput="updateGJFPreview()"><option value="rings">環中心に自動配置 / Ring centres</option><option value="atoms">指定原子の中心 / Selected atoms</option><option value="manual">座標を直接入力 / Coordinates</option><option value="sheet">2D NICS シート / Grid sheet</option></select></div>
+            <!-- ver31: 画面の文字は applyLang() で日英を切り替える（以前は「日本語 / English」を1つの文字列につないでいた）。
+                 シートの範囲（U・V の最小・最大）は空欄なら分子の範囲＋1.5 Å で埋める（nicsFitFill()）。平面・基準原子を変えたら空にして合わせ直す。
+                 座標の決め方の説明文と「Bq ○点…」の案内は消した（平面の選択肢の「XY（高さ Z）」で足りる。下の一文はエラーと注意だけ） -->
+            <div class="form-irow"><label id="gjf-l-nics-mode" for="gjf-nics-mode">配置</label><select class="ui-field form-select" id="gjf-nics-mode" oninput="updateGJFPreview()"><option value="rings" id="gjf-nics-mode-rings">環の中心に自動で置く</option><option value="atoms" id="gjf-nics-mode-atoms">指定した原子の中心</option><option value="manual" id="gjf-nics-mode-manual">座標を直接入力</option><option value="sheet" id="gjf-nics-mode-sheet">2D NICS シート</option></select></div>
             <div id="gjf-nics-placement" hidden>
-              <div class="form-irow" data-nics-mode="atoms"><label for="gjf-nics-atoms">原子番号</label><input class="ui-field form-input" id="gjf-nics-atoms" placeholder="1 2 3 4 5 6" oninput="updateGJFPreview()"></div>
-              <div class="form-irow" data-nics-mode="sheet"><label for="gjf-nics-plane">平面</label><select class="ui-field form-select" id="gjf-nics-plane" oninput="updateGJFPreview()"><option value="xy">XY（高さ Z）</option><option value="xz">XZ（高さ Y）</option><option value="yz">YZ（高さ X）</option><option value="fit">指定原子の最適平面 / Fitted plane</option></select></div>
-              <div class="form-irow" data-nics-mode="sheet"><label for="gjf-nics-plane-atoms">基準原子</label><input class="ui-field form-input" id="gjf-nics-plane-atoms" placeholder="空欄＝全重原子 / blank = heavy atoms" oninput="updateGJFPreview()"></div>
-              <div class="form-irow" data-nics-mode="atoms sheet"><label for="gjf-nics-height">高さ Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-height-range" min="-10" max="10" step="0.1" value="1" aria-label="高さ Å" oninput="nicsSliderInput('height',this.value)"><input type="number" step="0.1" value="1" class="ui-field" id="gjf-nics-height" aria-label="高さ Å" oninput="updateGJFPreview()"></div></div>
+              <div class="form-irow" data-nics-mode="atoms"><label id="gjf-l-nics-atoms" for="gjf-nics-atoms">原子番号</label><input class="ui-field form-input" id="gjf-nics-atoms" placeholder="1 2 3 4 5 6" oninput="updateGJFPreview()"></div>
+              <div class="form-irow" data-nics-mode="sheet"><label id="gjf-l-nics-plane" for="gjf-nics-plane">平面</label><select class="ui-field form-select" id="gjf-nics-plane" oninput="nicsFrameChanged()"><option value="xy">XY（高さ Z）</option><option value="xz">XZ（高さ Y）</option><option value="yz">YZ（高さ X）</option><option value="fit" id="gjf-nics-plane-fit">指定した原子の最適平面</option></select></div>
+              <div class="form-irow" data-nics-mode="sheet"><label id="gjf-l-nics-plane-atoms" for="gjf-nics-plane-atoms">基準原子</label><input class="ui-field form-input" id="gjf-nics-plane-atoms" placeholder="空欄で全重原子" oninput="nicsFrameChanged()"></div>
+              <div data-nics-mode="atoms sheet"><div class="form-irow"><label id="gjf-l-nics-height" for="gjf-nics-height">高さ Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-height-range" min="-10" max="10" step="0.1" value="1" aria-label="高さ Å" oninput="nicsSliderInput('height',this.value)"><input type="number" step="0.1" value="1" class="ui-field" id="gjf-nics-height" aria-label="高さ Å" oninput="updateGJFPreview()"></div></div></div>
               <div data-nics-mode="sheet">
-                <div class="form-irow"><label for="gjf-nics-umin">U 最小 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-umin-range" min="-10" max="10" step="0.1" value="-4" aria-label="U 最小 Å" oninput="nicsSliderInput('umin',this.value)"><input type="number" step="0.1" value="-4" class="ui-field" id="gjf-nics-umin" aria-label="U 最小 Å" oninput="updateGJFPreview()"></div></div>
-                <div class="form-irow"><label for="gjf-nics-umax">U 最大 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-umax-range" min="-10" max="10" step="0.1" value="4" aria-label="U 最大 Å" oninput="nicsSliderInput('umax',this.value)"><input type="number" step="0.1" value="4" class="ui-field" id="gjf-nics-umax" aria-label="U 最大 Å" oninput="updateGJFPreview()"></div></div>
-                <div class="form-irow"><label for="gjf-nics-vmin">V 最小 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-vmin-range" min="-10" max="10" step="0.1" value="-4" aria-label="V 最小 Å" oninput="nicsSliderInput('vmin',this.value)"><input type="number" step="0.1" value="-4" class="ui-field" id="gjf-nics-vmin" aria-label="V 最小 Å" oninput="updateGJFPreview()"></div></div>
-                <div class="form-irow"><label for="gjf-nics-vmax">V 最大 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-vmax-range" min="-10" max="10" step="0.1" value="4" aria-label="V 最大 Å" oninput="nicsSliderInput('vmax',this.value)"><input type="number" step="0.1" value="4" class="ui-field" id="gjf-nics-vmax" aria-label="V 最大 Å" oninput="updateGJFPreview()"></div></div>
-                <div class="form-irow"><label for="gjf-nics-step">間隔 Å</label><input type="number" min="0.01" step="0.1" value="0.2" class="ui-field form-input" id="gjf-nics-step" oninput="updateGJFPreview()"></div>
-                <button type="button" class="small-btn ui-secondary" onclick="nicsFitBounds()">分子の範囲＋1.5 Å / Fit bounds</button>
-                <div class="small-muted">XY: U=X, V=Y / XZ: U=X, V=Z / YZ: U=Y, V=Z。高さは固定軸の座標。最適平面では原子の中心を原点とする相対座標です。正の高さは法線の最大成分が正になる側です。</div>
+                <div class="form-irow"><label id="gjf-l-nics-umin" for="gjf-nics-umin">U 最小 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-umin-range" min="-10" max="10" step="0.1" value="0" aria-label="U 最小 Å" oninput="nicsSliderInput('umin',this.value)"><input type="number" step="0.1" value="" class="ui-field" id="gjf-nics-umin" aria-label="U 最小 Å" oninput="updateGJFPreview()"></div></div>
+                <div class="form-irow"><label id="gjf-l-nics-umax" for="gjf-nics-umax">U 最大 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-umax-range" min="-10" max="10" step="0.1" value="0" aria-label="U 最大 Å" oninput="nicsSliderInput('umax',this.value)"><input type="number" step="0.1" value="" class="ui-field" id="gjf-nics-umax" aria-label="U 最大 Å" oninput="updateGJFPreview()"></div></div>
+                <div class="form-irow"><label id="gjf-l-nics-vmin" for="gjf-nics-vmin">V 最小 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-vmin-range" min="-10" max="10" step="0.1" value="0" aria-label="V 最小 Å" oninput="nicsSliderInput('vmin',this.value)"><input type="number" step="0.1" value="" class="ui-field" id="gjf-nics-vmin" aria-label="V 最小 Å" oninput="updateGJFPreview()"></div></div>
+                <div class="form-irow"><label id="gjf-l-nics-vmax" for="gjf-nics-vmax">V 最大 Å</label><div class="nics-slider-field"><input type="range" class="range-sub" id="gjf-nics-vmax-range" min="-10" max="10" step="0.1" value="0" aria-label="V 最大 Å" oninput="nicsSliderInput('vmax',this.value)"><input type="number" step="0.1" value="" class="ui-field" id="gjf-nics-vmax" aria-label="V 最大 Å" oninput="updateGJFPreview()"></div></div>
+                <div class="form-irow"><label id="gjf-l-nics-step" for="gjf-nics-step">間隔 Å</label><input type="number" min="0.01" step="0.1" value="0.2" class="ui-field form-input" id="gjf-nics-step" oninput="updateGJFPreview()"></div>
+                <div class="form-irow"><span></span><div><button type="button" class="small-btn ui-secondary" id="gjf-nics-fit-btn" onclick="nicsFitBounds()" title="U・V の範囲を分子の範囲＋1.5 Å に戻す">分子に合わせる</button></div></div>
               </div>
-              <div data-nics-mode="manual"><label for="gjf-nics-coords">Bq 座標 / Coordinates (Å)：1行に X Y Z</label><textarea class="form-input" id="gjf-nics-coords" rows="4" placeholder="0 0 1&#10;0 0 -1" oninput="updateGJFPreview()"></textarea></div>
+              <div data-nics-mode="manual"><label id="gjf-l-nics-coords" class="nics-points-label" for="gjf-nics-coords">Bq の座標（Å）：1行に X Y Z</label><textarea class="form-input" id="gjf-nics-coords" rows="4" placeholder="0 0 1&#10;0 0 -1" oninput="updateGJFPreview()"></textarea></div>
             </div>
 
             <div class="form-irow" data-nics-mode="rings">
@@ -2364,7 +2387,7 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
           <div class="form-irow pair">
             <label id="gjf-l-method" for="gjf-method-sel">手法</label>
             <div class="form-cell">
-              <select class="ui-field form-select" id="gjf-method-sel" oninput="gjfLevelSel('method')"><option value="B3LYP" selected>B3LYP</option><option value="CAM-B3LYP">CAM-B3LYP</option><option value="M06-2X">M06-2X</option><option value="wB97XD">wB97XD</option><option value="PBE1PBE">PBE1PBE</option><option value="B3PW91">B3PW91</option><option value="BLYP">BLYP</option><option value="PBEPBE">PBEPBE</option><option value="TPSSh">TPSSh</option><option value="B2PLYP">B2PLYP</option><option value="HF">HF</option><option value="MP2">MP2</option><option value="__other" id="gjf-method-other">その他（手入力）</option></select>
+              <select class="ui-field form-select" id="gjf-method-sel" oninput="gjfLevelSel('method')"><option value="B3LYP" selected>B3LYP</option><option value="CAM-B3LYP">CAM-B3LYP</option><option value="M06-2X">M06-2X</option><option value="M11">M11</option><option value="wB97XD">wB97XD</option><option value="PBE1PBE">PBE1PBE</option><option value="B3PW91">B3PW91</option><option value="BLYP">BLYP</option><option value="PBEPBE">PBEPBE</option><option value="TPSSh">TPSSh</option><option value="B2PLYP">B2PLYP</option><option value="HF">HF</option><option value="MP2">MP2</option><option value="__other" id="gjf-method-other">その他（手入力）</option></select>
               <input class="ui-field form-input" id="gjf-method" value="B3LYP" oninput="updateGJFPreview()" style="display:none">
             </div>
             <label id="gjf-l-basis" for="gjf-basis-sel">基底</label>
@@ -2573,6 +2596,15 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
 <button class="small-btn ui-primary" id="plot-save-confirm" onclick="saveCurrentPlot()">保存</button>
 </dialog>
 <dialog class="axis-settings-dialog" id="nics-3d-settings-dialog" aria-label="NICS 3D"></dialog>
+<!-- ver31: 環電流の表示設定（2D）と 3D の表示設定。NICS と同じ形（見出しをドラッグで動かせる） -->
+<dialog class="axis-settings-dialog" id="jcur-settings-dialog" aria-labelledby="jcur-settings-title">
+  <div class="axis-dialog-head"><h2 id="jcur-settings-title">環電流の表示設定</h2><button type="button" class="small-btn ui-secondary" id="jcur-settings-close" onclick="this.closest('dialog').close()">閉じる</button></div>
+  <div id="jcur-settings-body"></div>
+</dialog>
+<dialog class="axis-settings-dialog" id="jcur-3d-settings-dialog" aria-labelledby="jcur-3d-settings-title">
+  <div class="axis-dialog-head"><h2 id="jcur-3d-settings-title">環電流の 3D 表示設定</h2><button type="button" class="small-btn ui-secondary" id="jcur-3d-settings-close" onclick="this.closest('dialog').close()">閉じる</button></div>
+  <div id="jcur-3d-settings-body"></div>
+</dialog>
 <dialog class="axis-settings-dialog" id="nics-settings-dialog" aria-labelledby="nics-settings-title">
   <div class="axis-dialog-head"><h2 id="nics-settings-title">NICS の表示設定</h2><button type="button" class="small-btn ui-secondary" id="nics-settings-close" onclick="this.closest('dialog').close()">閉じる</button></div>
   <div id="nics-settings-body"></div>
@@ -3265,6 +3297,25 @@ function applyLang(){
   _setTxt('gjf-l-nics-side','配置面','Side');
   _setTxt('gjf-nics-side-1','片面','One side');
   _setTxt('gjf-nics-side-2','両面','Both sides');
+  // ver31: NICS の配置（以前は「日本語 / English」を1つにつないでいた）
+  _setTxt('gjf-l-nics-mode','配置','Place');
+  _setTxt('gjf-nics-mode-rings','環の中心に自動で置く','Ring centres (auto)');
+  _setTxt('gjf-nics-mode-atoms','指定した原子の中心','Centre of given atoms');
+  _setTxt('gjf-nics-mode-manual','座標を直接入力','Enter coordinates');
+  _setTxt('gjf-nics-mode-sheet','2D NICS シート','2D NICS grid');
+  _setTxt('gjf-l-nics-atoms','原子番号','Atoms');
+  _setTxt('gjf-l-nics-plane','平面','Plane');
+  _setTxt('gjf-nics-plane-fit','指定した原子の最適平面','Best-fit plane of atoms');
+  _setTxt('gjf-l-nics-plane-atoms','基準原子','Ref. atoms');
+  _setTxt('gjf-l-nics-step','間隔 Å','Step Å');
+  _setTxt('gjf-l-nics-coords','Bq の座標（Å）：1行に X Y Z','Bq coordinates (Å): one X Y Z per line');
+  _setTxt('gjf-nics-fit-btn','分子に合わせる','Fit to molecule');
+  { const e=document.getElementById('gjf-nics-fit-btn'); if(e) e.title=_JA?'U・V の範囲を分子の範囲＋1.5 Å に戻す':'Reset the U / V range to the molecule plus 1.5 Å'; }
+  { const e=document.getElementById('gjf-nics-plane-atoms'); if(e) e.placeholder=_JA?'空欄で全重原子':'Blank = all heavy atoms'; }
+  [['height','高さ Å','Height Å'],['umin','U 最小 Å','U min Å'],['umax','U 最大 Å','U max Å'],['vmin','V 最小 Å','V min Å'],['vmax','V 最大 Å','V max Å']].forEach(([k,ja,en])=>{
+    const t=_JA?ja:en; _setTxt('gjf-l-nics-'+k,ja,en);
+    for (const id of ['gjf-nics-'+k,'gjf-nics-'+k+'-range']) document.getElementById(id)?.setAttribute('aria-label',t);
+  });
   _setTxt('gjf-l-prev','プレビュー','Preview');
   _setTxt('gjf-dl-btn','.gjf をダウンロード','Download .gjf');
   _setTxt('gjf-copy-btn','コピー','Copy');
@@ -6054,7 +6105,7 @@ window.openAxisSettings = function(){
 };
 // 中央で開き、見出しをドラッグして移動。操作ボタンはドラッグ対象にしない。
 {
-  for (const dialog of document.querySelectorAll('#axis-settings-dialog,#bondlen-settings-dialog,#atom-label-dialog,#bondorder-dialog,#color-settings-dialog,#orb-settings-dialog,#nics-settings-dialog')) {
+  for (const dialog of document.querySelectorAll('#axis-settings-dialog,#bondlen-settings-dialog,#atom-label-dialog,#bondorder-dialog,#color-settings-dialog,#orb-settings-dialog,#nics-settings-dialog,#jcur-settings-dialog,#jcur-3d-settings-dialog')) {
   const handle = dialog.querySelector('.axis-dialog-head');
   let drag = null;
   const place = (left, top) => {
@@ -9990,7 +10041,8 @@ let currentCube=null;      // parseCube() の結果
 let currentJvec=null, jcurZ=1.0;
 // ver31: 3D（ACID の等値面と矢印）。s3 = 見た目（pov / app / mag）、iso3 = isovalue、arr3 = 矢印、sp3 = 矢印の間隔（bohr）
 // iso3g は GIMIC の acid.vti 用（GIMIC の ACID は AICD より 1 桁以上小さい値になるので、isovalue を別に持つ）
-let jcurView={mode:'arrow', sp:0.45, skel:true, speed:1, speed3:1, flow2:'trail', flow3:'trail', s3:'app', iso3:0.03, iso3g:0.001, arr3:true, sp3:0.6, cut3:true};   // cut3 = 3D に 2D の切り口の板を出す
+// ink = 墨一色の矢印（と地図の上の流線）の色、ramp = 色付きの矢印・流線の 弱・中・強 の3色（ver31。既定は以前の JCUR_RAMP_LINE）
+let jcurView={mode:'arrow', sp:0.45, skel:true, speed:1, speed3:1, flow2:'trail', flow3:'trail', s3:'app', iso3:0.03, iso3g:0.001, arr3:true, sp3:0.6, cut3:true, ink:'#1b2430', ramp:['#c4cdd6','#0f766e','#0a302c']};   // cut3 = 3D に 2D の切り口の板を出す
 let jcur3dOn=false, jcur3dGroup=null, _jcur3dWorker=null, _jcur3dJob=0;
 try { const v=JSON.parse(localStorage.getItem('glv-jcur')||'null');
   if(v){ if(['arrow','arrowc','stream','map'].includes(v.mode)) jcurView.mode=v.mode;
@@ -10005,7 +10057,9 @@ try { const v=JSON.parse(localStorage.getItem('glv-jcur')||'null');
     if(Number.isFinite(v.iso3g)&&v.iso3g>0) jcurView.iso3g=v.iso3g;
     if(typeof v.arr3==='boolean') jcurView.arr3=v.arr3;
     if(typeof v.cut3==='boolean') jcurView.cut3=v.cut3;
-    if(Number.isFinite(v.sp3)) jcurView.sp3=Math.min(1.2,Math.max(0.3,v.sp3)); } } catch(_) {}
+    if(Number.isFinite(v.sp3)) jcurView.sp3=Math.min(1.2,Math.max(0.3,v.sp3));
+    if(/^#[0-9a-f]{6}$/i.test(v.ink||'')) jcurView.ink=v.ink;
+    if(Array.isArray(v.ramp)&&v.ramp.length===3&&v.ramp.every(c=>/^#[0-9a-f]{6}$/i.test(c))) jcurView.ramp=v.ramp.slice(); } } catch(_) {}
 let _isoCurrent=null;      // 'spin' | 'cube' | null（分子軌道を出しているときは _orbCurrent）
 let _surfJob=0, _surfBusy=false;
 // ver20: スピン密度の数値を 3D に出す（design/spin-labels-3d-comparison.html の案A1）。
@@ -11162,6 +11216,8 @@ function _jcurT(jv, m){ return Math.max(0, Math.min(1, (Math.log10(m / jv.gmax) 
 const JCUR_RAMP_FLOW = [[0,[51,107,167]],[1/3,[18,138,140]],[2/3,[230,181,45]],[1,[207,82,39]]];
 const JCUR_RAMP_LINE = [[0, [196, 205, 214]], [0.55, [15, 118, 110]], [1, [10, 48, 44]]];
 const JCUR_RAMP_FILL = [[0, [255, 255, 255]], [0.4, [214, 236, 232]], [0.8, [32, 140, 128]], [1, [9, 62, 57]]];
+// ver31: 色付きの矢印・流線の色の段。弱・中・強の3色は設定で変えられる（位置は JCUR_RAMP_LINE と同じ 0 / 0.55 / 1）
+function _jcurLineRamp() { const [a, b, c] = jcurView.ramp.map(_hex2rgb); return [[0, a], [0.55, b], [1, c]]; }
 function _jcurRamp(stops, t) {
   for (let k = 1; k < stops.length; k++) if (t <= stops[k][0]) {
     const [t0, c0] = stops[k - 1], [t1, c1] = stops[k], w = (t - t0) / (t1 - t0 || 1);
@@ -11276,6 +11332,7 @@ function _jcurAnimFrame(now) {
     }
   }
 }
+window.setJcurFlow2 = function(on) { if (!!on !== _jcurPlaying) toggleJcurAnimation(); };   // ver31: 入/切の行から
 window.toggleJcurAnimation = function() {
   if (!currentJvec) return;
   _jcurPlaying = !_jcurPlaying; _jcurAnimLast = null;
@@ -11288,21 +11345,25 @@ function _jcurFlowStyleOptions(value, JA) {
 window.setJcurFlowStyle=function(d,value){
   if(!['arrow','trail'].includes(value))return;
   jcurView[d===3?'flow3':'flow2']=value;_saveJcurView();
-  if(d===3){if(_jcurFlowPlaying)_jcurFlowBuild();_jcurBarRender();}
+  if(d===3){if(_jcurFlowPlaying)_jcurFlowBuild();}
   else renderJcurPanel();
 };
-window.setJcurSpeed = function(value) {
-  const speed = Number(value); if (!Number.isFinite(speed)) return;
+window.setJcurSpeed = function(value, src) {
+  const speed = parseFloat(value); if (!Number.isFinite(speed)) return;
   jcurView.speed = Math.min(3, Math.max(0.25, speed)); _saveJcurView();
-  const label = document.getElementById('jcur-speed-val'); if (label) label.textContent = '×' + jcurView.speed.toFixed(2);
+  _syncRangeNum('jcur-speed', jcurView.speed, 2, src);
 };
 function renderJcurPlot() {
   const svg = document.getElementById('jcur-svg'), jv = currentJvec;
   _jcurAnim = null; _jcurAnimLast = null;
   if (!svg || !jv) return;
   const mode = jcurView.mode, sp = jcurView.sp, fs = plotFS(), TP = plotTickPad();
-  const cbar = mode !== 'arrow', lineRamp = _jcurPlaying ? JCUR_RAMP_FLOW : JCUR_RAMP_LINE;
-  const W = 320, L = 30 + fs * 1.6, R = cbar ? 26 + fs * 3.2 : 10, T = 8, B = 16 + fs * 2.4;
+  // ver31: 矢印の色は設定で変えられる（墨一色＝jcurView.ink、色付き＝jcurView.ramp の3色）。流れの再生中は流れの色のまま
+  const cbar = mode !== 'arrow', lineRamp = _jcurPlaying ? JCUR_RAMP_FLOW : _jcurLineRamp(), ink = jcurView.ink;
+  // 右の余白は、色の帯・目盛り（0〜−4）・縦に回した見出しの幅から決める。回した文字は置いた点から右へ
+  //   文字の高さぶん（約 1.2 fs）はみ出すので、それも数える（以前は右端ぎりぎりに置いて見出しが切れていた。NICS と同じ直し方）
+  const bw = 7, tw = 2 * fs * 0.6;
+  const W = 320, L = 30 + fs * 1.6, R = cbar ? 8 + bw + 4 + TP + tw + fs * 0.35 + fs * 1.2 : 10, T = 8, B = 16 + fs * 2.4;
   const x0 = jv.ox, y0 = jv.oy, x1 = x0 + (jv.nx - 1) * jv.dx, y1 = y0 + (jv.ny - 1) * jv.dy;
   const pw = W - L - R, k = pw / (x1 - x0), ph = (y1 - y0) * k, H = Math.round(T + ph + B);
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
@@ -11363,37 +11424,38 @@ function renderJcurPlot() {
   // 1 本の流線を細かい線分で引いているので、同じ色の隣どうしをつなぐため linecap は round
   const sw = mode === 'arrow' ? 0.6 : mode === 'map' ? 0.5 : 0.65;
   for (const bin of Object.keys(shafts)) {
-    const col = bin === 'ink' ? 'var(--text)' : _jcurRgb(_jcurRamp(lineRamp, (+bin + 0.5) / NB));
+    const col = bin === 'ink' ? ink : _jcurRgb(_jcurRamp(lineRamp, (+bin + 0.5) / NB));
     body += `<path d="${shafts[bin]}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"/>`;
     if (heads[bin]) body += `<path d="${heads[bin]}" fill="${col}" stroke="none"/>`;
   }
   for (const bin of Object.keys(heads)) if (!shafts[bin]) {
-    const col = bin === 'ink' ? 'var(--text)' : _jcurRgb(_jcurRamp(lineRamp, (+bin + 0.5) / NB));
+    const col = bin === 'ink' ? ink : _jcurRgb(_jcurRamp(lineRamp, (+bin + 0.5) / NB));
     body += `<path d="${heads[bin]}" fill="${col}" stroke="none"/>`;
   }
   // 軸・目盛り（文字は英語で固定）。ACID で分子が xy 面にないときは、当てはめた面の軸（x′ / y′）
   const prime = jv.kind === 'acid' && !jv.frame.ident, axU = prime ? 'x′' : 'x', axV = prime ? 'y′' : 'y';
+  // ver31: 座標・高さは Å で書く（NICS と同じ）。GIMIC・ACID の数値は bohr なので、中では bohr のまま持ち、目盛りの位置だけ換算する
   let ax = `<rect class="plot-axis" x="${f1(L)}" y="${f1(T)}" width="${f1(pw)}" height="${f1(ph)}" fill="none"/>`;
-  const st = _jcurNiceStep(Math.max(x1 - x0, y1 - y0));
-  for (let v = Math.ceil(x0 / st - 1e-9) * st; v <= x1 + 1e-9; v += st) {
-    const x = sx(v);
+  const st = _jcurNiceStep(Math.max(x1 - x0, y1 - y0) * BOHR);
+  for (let v = Math.ceil(x0 * BOHR / st - 1e-9) * st; v <= x1 * BOHR + 1e-9; v += st) {
+    const x = sx(v / BOHR);
     ax += `<line class="plot-axis" x1="${f1(x)}" y1="${f1(T + ph)}" x2="${f1(x)}" y2="${f1(T + ph + 3)}"/>`
         + `<text class="plot-label" x="${f1(x)}" y="${f1(T + ph + fs * 1.25 + TP)}" text-anchor="middle">${_jcurNum(v)}</text>`;
   }
-  for (let v = Math.ceil(y0 / st - 1e-9) * st; v <= y1 + 1e-9; v += st) {
-    const y = sy(v);
+  for (let v = Math.ceil(y0 * BOHR / st - 1e-9) * st; v <= y1 * BOHR + 1e-9; v += st) {
+    const y = sy(v / BOHR);
     ax += `<line class="plot-axis" x1="${f1(L - 3)}" y1="${f1(y)}" x2="${f1(L)}" y2="${f1(y)}"/>`
         + `<text class="plot-label" x="${f1(L - 4 - TP)}" y="${f1(y + fs * 0.36)}" text-anchor="end">${_jcurNum(v)}</text>`;
   }
-  ax += `<text class="plot-label" x="${f1(L + pw / 2)}" y="${f1(H - fs * 0.45)}" text-anchor="middle">${axU} / bohr</text>`
-      + `<text class="plot-label" transform="translate(${f1(fs * 0.95)} ${f1(T + ph / 2)}) rotate(-90)" text-anchor="middle">${axV} / bohr</text>`;
+  ax += `<text class="plot-label" x="${f1(L + pw / 2)}" y="${f1(H - fs * 0.45)}" text-anchor="middle">${axU} / Å</text>`
+      + `<text class="plot-label" transform="translate(${f1(fs * 0.95)} ${f1(T + ph / 2)}) rotate(-90)" text-anchor="middle">${axV} / Å</text>`;
   // 面の高さと磁場の向き（図を貼ったあとでも読めるよう図の中に書く）
-  const note = `z = ${jcurZ.toFixed(2)} bohr,  B ⊙`, nw = note.length * fs * 0.6 + 8;
+  const note = `z = ${(jcurZ * BOHR).toFixed(2)} Å,  B ⊙`, nw = note.length * fs * 0.6 + 8;
   ax += `<rect x="${f1(L + 3)}" y="${f1(T + 3)}" width="${f1(nw)}" height="${f1(fs * 1.5)}" fill="#ffffff" fill-opacity="0.85"/>`
       + `<text class="plot-label" x="${f1(L + 7)}" y="${f1(T + 3 + fs * 1.08)}">${note}</text>`;
   let cb = '';
   if (cbar) {
-    const stops = _jcurPlaying ? JCUR_RAMP_FLOW : mode === 'map' ? JCUR_RAMP_FILL : JCUR_RAMP_LINE, bx = L + pw + 8, bw = 7;
+    const stops = _jcurPlaying ? JCUR_RAMP_FLOW : mode === 'map' ? JCUR_RAMP_FILL : lineRamp, bx = L + pw + 8;
     let g = '';
     for (let i = 0; i <= 10; i++) g += `<stop offset="${i / 10}" stop-color="${_jcurRgb(_jcurRamp(stops, 1 - i / 10))}"/>`;
     cb += `<defs><linearGradient id="jcur-grad" x1="0" y1="0" x2="0" y2="1">${g}</linearGradient></defs>`
@@ -11404,7 +11466,7 @@ function renderJcurPlot() {
       cb += `<line class="plot-axis" x1="${f1(bx + bw)}" y1="${f1(y)}" x2="${f1(bx + bw + 3)}" y2="${f1(y)}"/>`
           + `<text class="plot-label" x="${f1(bx + bw + 4 + TP)}" y="${f1(y + fs * 0.36)}">${_jcurNum(e)}</text>`;
     }
-    cb += `<text class="plot-label" transform="translate(${f1(W - fs * 0.6)} ${f1(T + ph / 2)}) rotate(90)" text-anchor="middle">log₁₀ (|J| / |J|max)</text>`;
+    cb += `<text class="plot-label" transform="translate(${f1(bx + bw + 4 + TP + tw + fs * 0.35)} ${f1(T + ph / 2)}) rotate(90)" text-anchor="middle">log₁₀ (|J| / |J|max)</text>`;
   }
   svg.innerHTML = `<defs><clipPath id="jcur-clip"><rect x="${f1(L)}" y="${f1(T)}" width="${f1(pw)}" height="${f1(ph)}"/></clipPath></defs>`
     + `<g clip-path="url(#jcur-clip)">${body}<g id="jcur-particles"/></g>` + ax + cb;
@@ -11429,7 +11491,7 @@ function renderJcurPlot() {
           const head=document.createElementNS('http://www.w3.org/2000/svg','circle');head.setAttribute('r','1.25');dot.appendChild(head);
         }else{
         dot = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        dot.setAttribute('d', 'M-7 -0.85H-1V-2.8L3 0L-1 2.8V0.85H-7Z'); dot.setAttribute('fill', 'var(--text)');
+        dot.setAttribute('d', 'M-7 -0.85H-1V-2.8L3 0L-1 2.8V0.85H-7Z'); dot.setAttribute('fill', jcurView.ink);
         dot.setAttribute('stroke', 'var(--bg)'); dot.setAttribute('stroke-width', '0.25');
         }
         layer.appendChild(dot); dots.push(dot);
@@ -11443,7 +11505,7 @@ function renderJcurPlot() {
 const JCUR_MODES = [['arrow', '矢印', 'Arrows'], ['arrowc', '矢印（色）', 'Arrows (colour)'], ['stream', '流線', 'Streamlines'], ['map', '地図', 'Map']];
 // ファイル名の横の説明。GIMIC は格子、ACID は対象（ログの IOp(10/93) から）と点の数
 function _jcurSrcInfo(jv, JA, za, zb) {
-  if (jv.kind !== 'acid') return `${jv.nx} × ${jv.ny} × ${jv.nz}${jv.nz > 1 ? `${JA ? '、' : ', '}z ${_jcurNum(za)}〜${_jcurNum(zb)} bohr` : ''}`;
+  if (jv.kind !== 'acid') return `${jv.nx} × ${jv.ny} × ${jv.nz}${jv.nz > 1 ? `${JA ? '、' : ', '}z ${_jcurNum(+(za * BOHR).toFixed(2))}〜${_jcurNum(+(zb * BOHR).toFixed(2))} Å` : ''}`;
   const lab = _acidTargetLabel(JA), pts = JA ? `${Math.round(jv.npts / 1e4)} 万点` : `${jv.npts.toLocaleString('en')} points`;
   return ['ACID', lab, pts].filter(Boolean).join(JA ? '・' : ', ');
 }
@@ -11452,7 +11514,7 @@ function renderJcurPanel() {
   if (_jcurAnim && _jcurAnim.field !== currentJvec) { _jcurPlaying = false; _jcurAnim = null; _jcurAnimLast = null; }
   const JA = lang !== 'en', kind = parsedResult && parsedResult.jobType;
   const show = !!parsedResult && (!!currentJvec || (kind !== 'mol' && kind !== 'cube' && _logHasNmr(parsedResult)));
-  if (!show) { card.style.display = 'none'; card.innerHTML = ''; _jcurBarRender(); _jcurCutUpdate(); return; }
+  if (!show) { card.style.display = 'none'; card.innerHTML = ''; document.getElementById('jcur-settings-dialog')?.close(); _jcurBarRender(); _jcurCutUpdate(); return; }
   card.style.display = 'block';
   const title = JA ? '環電流' : 'Ring current';
   if (!currentJvec) {
@@ -11462,58 +11524,101 @@ function renderJcurPanel() {
         <div class="small-muted">${JA ? 'GIMIC の <code>jvec.vti</code> か、ACID（<code>NMR=CSGT IOp(10/93=…)</code>）の <code>.txt</code> を読み込むと、分子面に平行な面の電流を描きます。ログと一緒にウィンドウへドロップしても開けます。'
                                        : 'Load GIMIC\'s <code>jvec.vti</code> or an ACID <code>.txt</code> (<code>NMR=CSGT IOp(10/93=…)</code>) to draw the current in a plane parallel to the molecule. You can also drop it on the window together with the log.'}</div>
       </div>`;
+    document.getElementById('jcur-settings-dialog')?.close();
     _jcurBarRender(); _jcurCutUpdate();   // 電流密度がないのでバーと切り口は隠れる
     return;
   }
   const jv = currentJvec, [za, zb] = _jcurZRange(jv);
   jcurZ = _jcurClampZ(jv, jcurZ);
-  const zStep = Math.max(0.01, +(jv.dz / 4).toFixed(3));
-  const seg = JCUR_MODES.map(([k, ja, en]) => `<button class="seg-btn${k === jcurView.mode ? ' active' : ''}" type="button" aria-pressed="${k === jcurView.mode}" onclick="setJcurMode('${k}')">${JA ? ja : en}</button>`).join('');
-  card.innerHTML = `<div class="panel-title has-actions"><span>${title}</span><span class="title-actions"><button class="small-btn ui-secondary plot-copy-btn" type="button" onclick="copyPlotImage('jcur-svg')"><svg class="ui-icon"><use href="#ui-clipboard"/></svg><span>${JA ? 'コピー' : 'Copy'}</span></button></span></div>
+  // ver31: カードには「見ながら動かすもの」（面の高さ・流れの再生）だけを残し、ほかは［設定］のウィンドウへ（NICS と同じ形）。
+  //   長さは Å で見せる（中は bohr のまま）。スライダーには数値の欄を添える（_rangeNum）
+  const zStep = Math.max(0.005, +(jv.dz * BOHR / 4).toFixed(3));
+  card.innerHTML = `<div class="panel-title has-actions"><span>${title}</span><span class="title-actions">
+      <button class="small-btn ui-secondary" type="button" onclick="openJcurSettings()" aria-haspopup="dialog" aria-label="${JA ? '環電流の表示設定' : 'Ring current display settings'}" title="${JA ? '環電流の表示設定' : 'Ring current display settings'}"><svg class="ui-icon" aria-hidden="true"><use href="#ui-settings"/></svg><span>${JA ? '設定' : 'Settings'}</span></button>
+      <button class="small-btn ui-secondary plot-copy-btn" type="button" onclick="copyPlotImage('jcur-svg')"><svg class="ui-icon"><use href="#ui-clipboard"/></svg><span>${JA ? 'コピー' : 'Copy'}</span></button></span></div>
     <div class="orb-row" style="margin-bottom:10px"><span class="small-muted" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${_xe(jv.name)}">${_xe(jv.name)}（${_jcurSrcInfo(jv, JA, za, zb)}）</span><button class="small-btn ui-secondary" type="button" onclick="removeJvec()">${JA ? '外す' : 'Remove'}</button></div>
     <svg id="jcur-svg" class="jcur-svg" viewBox="0 0 320 320" role="img" aria-label="${JA ? '環電流の図' : 'Ring current plot'}"></svg>
     ${jv.nz > 1 ? `<div class="orb-grp" style="margin-top:12px"><div class="orb-row">
       <span class="orb-lbl">${JA ? '面の高さ' : 'Height'}</span>
-      <input type="range" id="jcur-z" class="range-sub" min="${za}" max="${zb}" step="${zStep}" value="${jcurZ}" oninput="setJcurZ(this.value)">
-      <span class="orb-val" id="jcur-z-val">${jcurZ.toFixed(2)} bohr</span></div></div>` : ''}
-    <div class="orb-grp" style="margin-top:12px">
-      <div class="orb-row"><span class="orb-lbl">${JA ? '流れ' : 'Flow'}</span><button class="small-btn ui-toggle${_jcurPlaying ? ' active' : ''}" type="button" aria-pressed="${_jcurPlaying}" onclick="toggleJcurAnimation()">${_jcurPlaying ? (JA ? '停止' : 'Stop') : (JA ? '再生' : 'Play')}</button></div>
-      <div class="orb-row"><label class="orb-lbl" for="jcur-flow-style">${JA?'動きの表示':'Animation'}</label><select id="jcur-flow-style" class="ui-field" onchange="setJcurFlowStyle(2,this.value)">${_jcurFlowStyleOptions(jcurView.flow2,JA)}</select></div>
-      <div class="orb-row"><label class="orb-lbl" for="jcur-speed">${JA ? '速さ' : 'Speed'}</label><input id="jcur-speed" type="range" class="range-sub" min="0.25" max="3" step="0.25" value="${jcurView.speed}" oninput="setJcurSpeed(this.value)"><span class="orb-val" id="jcur-speed-val">×${jcurView.speed.toFixed(2)}</span></div>
-      <div class="small-muted">${JA ? '矢じり・明るい先端が進む向きが電流方向です。青→黄→朱の色が面内の電流密度の強さです。速さは表示用です。' : 'Arrowheads or bright moving heads show direction; blue → yellow → vermilion shows in-plane current-density magnitude. Speed is illustrative.'}<br>|J|max = ${jv.gmax.toExponential(3)} ${JA ? '（入力データの単位、面内成分の全格子最大値）' : '(input units; global in-plane maximum)'}</div>
-    </div>
-    <div class="orb-grp"${jv.nz > 1 ? '' : ' style="margin-top:12px"'}>
+      ${_rangeNum('jcur-z', +(za * BOHR).toFixed(3), +(zb * BOHR).toFixed(3), zStep, jcurZ * BOHR, 2, 'Å', 'setJcurZ', JA ? '面の高さ（Å）' : 'Height (Å)')}</div></div>` : ''}
+    <div class="orb-grp" style="margin-top:12px">${_swRow('jcur-flow2', _jcurPlaying, JA ? '流れを再生' : 'Play flow', 'setJcurFlow2(this.checked)')}</div>`;
+  renderJcurPlot();
+  renderJcurSettings();
+  _jcurBarRender();   // ver31: 3D の操作は 3D の下端のバー（よく触るものだけ）と、3D の左上の［設定］へ
+  _jcurCutUpdate();
+}
+// ver31: 入/切の行（振動タブの「曲線を表示」と同じ部品）
+function _swRow(id, on, label, onchange) {
+  return `<label class="set-toggle-row display-switch"><input role="switch" type="checkbox" id="${id}"${on ? ' checked' : ''} onchange="${onchange}"><span>${label}</span><span class="set-toggle" aria-hidden="true"></span></label>`;
+}
+// ver31: スライダーと数値の欄の組。どちらを動かしても setter(値, 触った部品) を呼び、もう片方は _syncRangeNum() でそろえる
+//   （打っている途中の欄は書き換えない）。数値の欄は打ち終えたとき（change）にだけ効かせたいもの（等値面の作り直しなど）は numEvent='change'
+function _rangeNum(id, min, max, step, val, digits, unit, setter, label, numEvent) {
+  return `<input type="range" id="${id}" class="range-sub" min="${min}" max="${max}" step="${step}" value="${val}" oninput="${setter}(this.value,this)" aria-label="${label}">`
+       + `<input class="ui-field" type="number" id="${id}-num" min="${min}" max="${max}" step="${step}" value="${(+val).toFixed(digits)}" on${numEvent || 'input'}="${setter}(this.value,this)" aria-label="${label}" style="width:76px"><span>${unit}</span>`;
+}
+function _syncRangeNum(id, val, digits, src) {
+  const r = document.getElementById(id), n = document.getElementById(id + '-num');
+  if (r && r !== src) r.value = val;
+  if (n && n !== src) n.value = (+val).toFixed(digits);
+}
+// 環電流の表示設定（2D）。描き方・間隔・矢印の色・骨格・流れの動きと速さ・説明
+function renderJcurSettings() {
+  const JA = lang !== 'en', jv = currentJvec, v = jcurView;
+  document.getElementById('jcur-settings-title').textContent = JA ? '環電流の表示設定' : 'Ring current display settings';
+  document.getElementById('jcur-settings-close').textContent = JA ? '閉じる' : 'Close';
+  const body = document.getElementById('jcur-settings-body'); if (!body) return;
+  if (!jv) { body.innerHTML = ''; return; }
+  const seg = JCUR_MODES.map(([k, ja, en]) => `<button class="seg-btn${k === v.mode ? ' active' : ''}" type="button" aria-pressed="${k === v.mode}" onclick="setJcurMode('${k}')">${JA ? ja : en}</button>`).join('');
+  // 墨一色（矢印・地図の上の流線）は1色、色付き（矢印（色）・流線）は 弱・中・強 の3色
+  const one = v.mode === 'arrow' || v.mode === 'map', what = v.mode === 'arrow' || v.mode === 'arrowc' ? (JA ? '矢印の色' : 'Arrow colour') : (JA ? '線の色' : 'Line colour');
+  const colors = one
+    ? `<input class="ui-color" type="color" value="${v.ink}" oninput="setJcurInk(this.value)" aria-label="${what}">`
+    : [JA ? '弱' : 'Weak', JA ? '中' : 'Mid', JA ? '強' : 'Strong'].map((t, i) => `<label>${t} <input class="ui-color" type="color" value="${v.ramp[i]}" oninput="setJcurRamp(${i},this.value)" aria-label="${what}: ${t}"></label>`).join('');
+  body.innerHTML = `<div class="orb-grp" style="margin-top:12px">
       <div class="orb-row"><span class="orb-lbl">${JA ? '描き方' : 'Style'}</span><div class="set-seg" role="group">${seg}</div></div>
-      <div class="orb-row"><span class="orb-lbl">${JA ? '間隔' : 'Spacing'}</span>
-        <input type="range" id="jcur-sp" class="range-sub" min="0.3" max="0.9" step="0.05" value="${jcurView.sp}" oninput="setJcurSpacing(this.value)">
-        <span class="orb-val" id="jcur-sp-val">${jcurView.sp.toFixed(2)} bohr</span></div>
-      <div class="orb-row"><span class="orb-lbl">${JA ? '骨格' : 'Skeleton'}</span><button class="small-btn ui-toggle${jcurView.skel ? ' active' : ''}" type="button" aria-pressed="${jcurView.skel}" onclick="toggleJcurSkel()">${JA ? '分子の骨格' : 'Molecular skeleton'}</button></div>
+      <div class="orb-row"><span class="orb-lbl">${JA ? '間隔' : 'Spacing'}</span>${_rangeNum('jcur-sp', +(0.3 * BOHR).toFixed(3), +(0.9 * BOHR).toFixed(3), 0.01, v.sp * BOHR, 2, 'Å', 'setJcurSpacing', JA ? '矢印・流線の間隔（Å）' : 'Spacing (Å)')}</div>
+      <div class="orb-row"><span class="orb-lbl">${what}</span>${colors}</div>
+      ${_jcurPlaying ? `<div class="small-muted">${JA ? '流れを再生している間は、流れの色（青→黄→朱）で描きます。' : 'While the flow plays, the flow colours (blue → yellow → vermilion) are used.'}</div>` : ''}
+    </div>
+    <div class="orb-grp">${_swRow('jcur-skel', v.skel, JA ? '分子の骨格を重ねる' : 'Overlay the molecular skeleton', 'setJcurSkel(this.checked)')}</div>
+    <div class="orb-grp">
+      <div class="orb-row"><label class="orb-lbl" for="jcur-flow-style">${JA ? '動き' : 'Animation'}</label><select id="jcur-flow-style" class="ui-field" onchange="setJcurFlowStyle(2,this.value)">${_jcurFlowStyleOptions(v.flow2, JA)}</select></div>
+      <div class="orb-row"><span class="orb-lbl">${JA ? '速さ' : 'Speed'}</span>${_rangeNum('jcur-speed', 0.25, 3, 0.25, v.speed, 2, JA ? '倍' : '×', 'setJcurSpeed', JA ? '流れの速さ' : 'Flow speed')}</div>
+      <div class="small-muted">${JA ? '矢じり・明るい先端が進む向きが電流方向です。青→黄→朱の色が面内の電流密度の強さです。速さは表示用です。' : 'Arrowheads or bright moving heads show direction; blue → yellow → vermilion shows in-plane current-density magnitude. Speed is illustrative.'}<br>|J|max = ${jv.gmax.toExponential(3)} ${JA ? '（入力データの単位、面内成分の全格子最大値）' : '(input units; global in-plane maximum)'}</div>
     </div>
     <div class="small-muted" style="margin-top:10px">${JA ? '磁場は手前向き（+z）。時計回りが反磁性（芳香族的）、反時計回りが常磁性（反芳香族的）。'
                                                           : 'The field points toward the viewer (+z): clockwise is diatropic (aromatic), anticlockwise paratropic (antiaromatic).'}</div>`;
-  renderJcurPlot();
-  _jcurBarRender();   // ver31: 3D の操作は 3D の下端のバーへ
-  _jcurCutUpdate();
 }
+window.openJcurSettings = function() {
+  if (!currentJvec) return;
+  renderJcurSettings();
+  const d = document.getElementById('jcur-settings-dialog');
+  if (!d.open) { for (const k of ['left', 'top', 'margin']) d.style.removeProperty(k); d.showModal(); }
+};
 window.renderJcurPanel = renderJcurPanel;
 window.setJcurMode = function(m) {
   if (!JCUR_MODES.some(x => x[0] === m)) return;
   if (!['stream', 'map'].includes(m)) _jcurPlaying = false;
   jcurView.mode = m; _saveJcurView(); renderJcurPanel();
 };
-window.setJcurZ = function(v) {
-  if (!currentJvec) return;
-  jcurZ = _jcurClampZ(currentJvec, +v);
-  const s = sessions.find(x => x.id === activeSessionId); if (s) s.jcurZ = jcurZ;
-  const lab = document.getElementById('jcur-z-val'); if (lab) lab.textContent = jcurZ.toFixed(2) + ' bohr';
+// ver31: 面の高さ・間隔は Å で受け取り、中では bohr で持つ
+window.setJcurZ = function(v, src) {
+  const x = parseFloat(v); if (!currentJvec || !Number.isFinite(x)) return;
+  jcurZ = _jcurClampZ(currentJvec, x / BOHR);
+  const s = sessions.find(o => o.id === activeSessionId); if (s) s.jcurZ = jcurZ;
+  _syncRangeNum('jcur-z', jcurZ * BOHR, 2, src);
   renderJcurPlot(); _jcurCutUpdate();   // ver31: 3D の切り口の板も動かす
 };
-window.setJcurSpacing = function(v) {
-  jcurView.sp = Math.min(0.9, Math.max(0.3, +v)); _saveJcurView();
-  const lab = document.getElementById('jcur-sp-val'); if (lab) lab.textContent = jcurView.sp.toFixed(2) + ' bohr';
+window.setJcurSpacing = function(v, src) {
+  const x = parseFloat(v); if (!Number.isFinite(x)) return;
+  jcurView.sp = Math.min(0.9, Math.max(0.3, x / BOHR)); _saveJcurView();
+  _syncRangeNum('jcur-sp', jcurView.sp * BOHR, 2, src);
   renderJcurPlot();
 };
-window.toggleJcurSkel = function() { jcurView.skel = !jcurView.skel; _saveJcurView(); renderJcurPanel(); };
+window.setJcurSkel = function(on) { jcurView.skel = !!on; _saveJcurView(); renderJcurPlot(); };
+window.setJcurInk = function(c) { if (!/^#[0-9a-f]{6}$/i.test(c)) return; jcurView.ink = c; _saveJcurView(); renderJcurPlot(); };
+window.setJcurRamp = function(i, c) { if (!(i >= 0 && i < 3) || !/^#[0-9a-f]{6}$/i.test(c)) return; jcurView.ramp[i] = c; _saveJcurView(); renderJcurPlot(); };
 // jvec.vti をいま開いているファイルに添える（.cube と同じく、ログの名前の鍵に本文を残す）
 // ver31: スカラーの .vti（GIMIC の acid.vti）。3D の等値面に使う
 function parseVtiScalar(text) {
@@ -11721,6 +11826,47 @@ async function attachAcid(text, name) {
     _idbTx('readwrite', st => st.put(keepObj, pairedJvecKey(s.filename))).then(r => { if (!r.ok) showToast(JA ? `${name} の数値を保存できませんでした（再読み込み後は開き直しが必要です）` : `Could not keep ${name} — you will need to reopen it after a reload`); });
   }
   return _attachField(jv, name);
+}
+/* ver31: 単独で開いた ACID の .txt（一覧から押す・それだけをドロップ・環電流タブのボタン・最近のファイル）の添え先。
+   以前は「いま選んでいるファイル」に無条件で添えていたので、NICS のログを選んだまま一覧の .txt を押すと NICS に付いた（todo.md 2026-10-20）。
+   ① 同じ名前のログ（CPA_ACID_pi.txt → CPA_ACID_pi.log）が開いていればそこ
+   ② 一覧から開いたときは、同じフォルダの同じ名前のログを先に開いてからそこ（openSibling）
+   ③ いま選んでいるファイルが ACID の計算（route に IOp(10/93)）ならそこ
+   どれでもなければ添えずに知らせる。ログと一緒にドロップしたときは、読んだログに添える（handleFiles。ここは通らない） */
+function _logIsAcid(r) {
+  if (!r) return false;
+  const routes = r.jobs && r.jobs.length ? r.jobs.map(j => j.route || '') : [r.route || ''];
+  return routes.some(x => /iop\(\s*10\/93/i.test(x));
+}
+function _acidSessionByName(name) {
+  const base = _baseName(name);
+  return sessions.find(s => _sessKind(s) === 'log' && !/\.txt$/i.test(s.filename) && _baseName(s.filename) === base) || null;
+}
+async function _acidAttachNamed(text, name, openSibling) {
+  const JA = lang !== 'en';
+  let target = _acidSessionByName(name);
+  if (!target && openSibling) { await openSibling(); target = _acidSessionByName(name); }
+  if (!target) { const a = sessions.find(s => s.id === activeSessionId); if (a && _logIsAcid(a.parsedResult)) target = a; }
+  if (!target) {
+    showToast(JA ? `${name} に合うログが開いていません（同じ名前の ACID の計算のログを先に開いてください）` : `No open log matches ${name} — open the ACID log with the same name first`);
+    return false;
+  }
+  if (target.id !== activeSessionId) window.activateSession(target.id);
+  const loading = document.getElementById('loading'), was = loading && loading.style.display;
+  if (loading) loading.style.display = 'flex';
+  await new Promise(r => setTimeout(r, 30));
+  try { return await attachAcid(text, name); }
+  finally { if (loading && was !== 'flex') loading.style.display = 'none'; }
+}
+// ver31: jvec.vti は名前がいつも同じで組にできないので、いま選んでいるファイルが NMR の計算のログのときだけ添える
+//   （単独でドロップ・環電流タブのボタンから。ログや .fchk と一緒にドロップしたときは、読んだファイルに添える）
+async function _attachVtiToActive(vtis) {
+  const JA = lang !== 'en', kind = parsedResult && parsedResult.jobType;
+  if (!parsedResult || kind === 'mol' || kind === 'cube' || kind === 'fchk' || !_logHasNmr(parsedResult)) {
+    showToast(JA ? 'jvec.vti は NMR の計算のログに添えます。いま選んでいるファイルは NMR の計算ではありません' : 'jvec.vti is attached to an NMR log; the selected file is not an NMR calculation');
+    return false;
+  }
+  return attachDroppedVti(vtis);
 }
 async function attachAcidFile(f) {
   const loading = document.getElementById('loading'), was = loading && loading.style.display;
@@ -12031,6 +12177,7 @@ function _drawJcurFlowLegendOn(ctx,W,H,scale){
 function _jcurFlowFrame(now) {
   const a=_jcurFlow; if(!a) return;
   if(a.field!==currentJvec) { _jcurFlowPlaying=false; _jcurFlowDispose(); return; }
+  a.object.visible = activeTab === 'jcur';   // ver31: 等値面と同じく「環電流」タブだけ（軌跡は a.object の子なので一緒に隠れる）
   a.object.position.set(-moleculeCentroid.x,-moleculeCentroid.y,-moleculeCentroid.z);
   _jcurFlowViewport();
   if(!_jcurFlowPlaying || document.hidden || activeTab!=='jcur') { _jcurFlowLast=null; return; }
@@ -12064,11 +12211,12 @@ window.toggleJcur3dFlow=function(){
   }
   _syncJcur3dUI();
 };
-window.setJcur3dSpeed=function(value){
-  const v=Number(value);if(!Number.isFinite(v))return;
+window.setJcur3dSpeed=function(value,src){
+  const v=parseFloat(value);if(!Number.isFinite(v))return;
   jcurView.speed3=Math.min(3,Math.max(0.25,v));_saveJcurView();
-  const el=document.getElementById('jcur3d-speed-val');if(el)el.textContent='×'+jcurView.speed3.toFixed(2);
+  _syncRangeNum('jcur3d-speed',jcurView.speed3,2,src);
 };
+window.setJcur3dFlowOn=function(on){ if(!!on!==_jcurFlowPlaying) toggleJcur3dFlow(); else _syncJcur3dUI(); };   // ver31: 入/切の行から
 function _jcurFlowLegend() {
   document.getElementById('jcur-flow-legend')?.remove();
   if(!_jcurFlow) return;
@@ -12082,11 +12230,6 @@ function _jcurFlowLegend() {
     <span>10⁻⁴ → 1 × |J|max</span><span>|J|max = ${maximum.toExponential(3)} ${JA?'（入力データの単位）':'(input units)'}</span>
     <span>${JA?'速度は表示用。色は全3成分の強さ（断面積分した電流量ではありません）。':'Speed is illustrative; colour represents the full vector magnitude, not integrated current.'}</span>`;
   bar.appendChild(el);
-}
-function _jcurFlowControls(JA) {
-  return `<div class="jcur3d-group"><button class="small-btn ui-toggle" id="jcur3d-flow" type="button" onclick="toggleJcur3dFlow()" title="${JA?'電流方向の可視化。速さは表示用です':'Shows current direction; speed is illustrative'}">${JA?'流れを再生':'Play flow'}</button>
-    <label for="jcur3d-flow-style">${JA?'動き':'Animation'}</label><select id="jcur3d-flow-style" class="ui-field" onchange="setJcurFlowStyle(3,this.value)">${_jcurFlowStyleOptions(jcurView.flow3,JA)}</select>
-    <label for="jcur3d-speed">${JA?'速さ':'Speed'}</label><input type="range" id="jcur3d-speed" class="range-sub" min="0.25" max="3" step="0.25" value="${jcurView.speed3}" oninput="setJcur3dSpeed(this.value)"><span class="jb-val" id="jcur3d-speed-val">×${jcurView.speed3.toFixed(2)}</span></div>`;
 }
 function _jcur3dDispose() {
   if (!jcur3dGroup) return;
@@ -12105,6 +12248,9 @@ function _jcur3dClear(rebuild, keepFlow) {
 function _jcur3dFrame() {
   if (_jcurCut) _jcurCut.position.set(-moleculeCentroid.x, -moleculeCentroid.y, -moleculeCentroid.z);
   if (!jcur3dGroup) return;
+  // ver31: 等値面・矢印は「環電流」タブを見ている間だけ出す。それまではタブを替えても残していたが、
+  //   作成タブで NICS の格子を置くときなどに ACID の面が重なって邪魔だった。隠すだけで作り直さない（戻ればそのまま出る）
+  jcur3dGroup.visible = activeTab === 'jcur';
   jcur3dGroup.position.set(-moleculeCentroid.x, -moleculeCentroid.y, -moleculeCentroid.z);
   if (jcur3dGroup.userData.pov && jcur3dGroup.visible) { for (const m of atomMeshes) m.visible = false; for (const m of bondMeshes) m.visible = false; }
 }
@@ -12182,6 +12328,7 @@ function jcur3dShow() {
   _jcur3dWorker.onerror = e => { console.error(e); const s2 = document.getElementById('jcur3d-status'); if (s2) s2.textContent = JA ? '等値面を計算できませんでした' : 'Failed to compute the surface'; };
   _jcur3dWorker.postMessage({ id, kind: 'cube', field: g.field, iso: jcurView[_jcurIsoKey()], grid: { nx: g.nx, ny: g.ny, nz: g.nz, dx: 1, ox: 0, oy: 0, oz: 0, axes: { origin: g.o, axes: g.ax } } });
 }
+window.setJcur3dOn = function(on) { if (!!on !== jcur3dOn) toggleJcur3d(); };   // ver31: 入/切の行から
 window.toggleJcur3d = function() {
   jcur3dOn = !jcur3dOn;
   if (jcur3dOn) jcur3dShow(); else _jcur3dClear(true, true);
@@ -12192,12 +12339,19 @@ window.setJcur3dStyle = function(k) {
   jcurView.s3 = k; _saveJcurView(); _syncJcur3dUI();
   if (jcur3dOn && _jcur3dSurf) _jcur3dBuild();
 };
+// ver31: スライダーは log10、数値の欄は値そのもの。等値面の作り直しはスライダーを離したとき・欄を打ち終えたとき
 window.setJcur3dIso = function(v, done) {
-  const k = _jcurIsoKey(); jcurView[k] = Math.pow(10, +v); _saveJcurView();
-  const lab = document.getElementById('jcur3d-iso-val'); if (lab) lab.textContent = _fmtJcurIso(jcurView[k]);
+  const k = _jcurIsoKey(); jcurView[k] = Math.pow(10, Math.min(-0.5, Math.max(-4, +v))); _saveJcurView();
+  const n = document.getElementById('jcur3d-iso-num'); if (n) n.value = _fmtJcurIso(jcurView[k]);
   if (done && jcur3dOn) jcur3dShow();
 };
-window.toggleJcurCut = function() { jcurView.cut3 = !jcurView.cut3; _saveJcurView(); _syncJcur3dUI(); _jcurCutUpdate(); };
+window.setJcur3dIsoNum = function(v) {
+  const x = parseFloat(v); if (!(x > 0)) return;
+  const k = _jcurIsoKey(); jcurView[k] = Math.min(Math.pow(10, -0.5), Math.max(1e-4, x)); _saveJcurView();
+  const r = document.getElementById('jcur3d-iso'); if (r) r.value = Math.log10(jcurView[k]);
+  if (jcur3dOn) jcur3dShow();
+};
+window.setJcurCut3 = function(on) { jcurView.cut3 = !!on; _saveJcurView(); _syncJcur3dUI(); _jcurCutUpdate(); };
 // 2D の図で切っている面（GIMIC は z = 一定、ACID は当てはめた面に平行）を、半透明の板と縁で 3D に重ねる
 let _jcurCut = null;
 function _jcurCutUpdate() {
@@ -12223,55 +12377,87 @@ function _jcurCutUpdate() {
   ln.geometry.attributes.position.array.set(loop); ln.geometry.attributes.position.needsUpdate = true; ln.geometry.computeBoundingSphere();
   _jcurCut.visible = true;
 }
-window.toggleJcur3dArrows = function() { jcurView.arr3 = !jcurView.arr3; _saveJcurView(); _syncJcur3dUI(); if (jcur3dOn && _jcur3dSurf) _jcur3dBuild(); };
-window.setJcur3dSpacing = function(v, done) {
-  jcurView.sp3 = Math.min(1.2, Math.max(0.3, +v)); _saveJcurView();
-  const lab = document.getElementById('jcur3d-sp-val'); if (lab) lab.textContent = jcurView.sp3.toFixed(2) + ' bohr';
-  if (done && jcur3dOn && _jcur3dSurf) _jcur3dBuild();
+window.setJcurArrows3 = function(on) { jcurView.arr3 = !!on; _saveJcurView(); _syncJcur3dUI(); if (jcur3dOn && _jcur3dSurf) _jcur3dBuild(); };
+// ver31: 間隔は Å で受け取り、中では bohr。矢印の作り直しはスライダーを離したとき・欄を打ち終えたとき（どちらも change）
+window.setJcur3dSpacing = function(v, src) {
+  const x = parseFloat(v); if (!Number.isFinite(x)) return;
+  jcurView.sp3 = Math.min(1.2, Math.max(0.3, x / BOHR)); _saveJcurView();
+  _syncRangeNum('jcur3d-sp', jcurView.sp3 * BOHR, 2, src);
 };
+window.setJcur3dSpacingDone = function() { if (jcur3dOn && _jcur3dSurf) _jcur3dBuild(); };
 function _jcurIsoKey(){ return currentJvec && currentJvec.kind !== 'acid' ? 'iso3g' : 'iso3'; }
 function _fmtJcurIso(v){ return v >= 0.01 ? v.toFixed(3) : v >= 0.001 ? v.toFixed(4) : v.toPrecision(2); }
 function _syncJcur3dUI() {
   _jcurFlowLegend();
-  const fb=document.getElementById('jcur3d-flow'); if(fb){fb.classList.toggle('active',_jcurFlowPlaying);fb.setAttribute('aria-pressed',String(_jcurFlowPlaying));fb.textContent=_jcurFlowPlaying?(lang!=='en'?'流れを停止':'Stop flow'):(lang!=='en'?'流れを再生':'Play flow');}
-  const b = document.getElementById('jcur3d-btn'); if (b) { b.classList.toggle('active', jcur3dOn); b.setAttribute('aria-pressed', String(jcur3dOn)); }
+  const setSw = (id, on) => { const e = document.getElementById(id); if (e) e.checked = !!on; };
+  setSw('jcur3d-btn', jcur3dOn); setSw('jcur3d-flow', _jcurFlowPlaying); setSw('jcur3d-arr', jcurView.arr3); setSw('jcur3d-cut', jcurView.cut3);
   document.querySelectorAll('#jcur3d-style .seg-btn').forEach(x => { const on = x.dataset.k === jcurView.s3; x.classList.toggle('active', on); x.setAttribute('aria-pressed', String(on)); });
-  const ab = document.getElementById('jcur3d-arr'); if (ab) { ab.classList.toggle('active', jcurView.arr3); ab.setAttribute('aria-pressed', String(jcurView.arr3)); }
   // POV-Ray の見た目は矢印を AICD と同じく面の頂点ごとに出すので、間隔のスライダーは使わない
-  const pov = jcurView.s3 === 'pov';
-  ['jcur3d-sp', 'jcur3d-sp-val'].forEach(id => { const e = document.getElementById(id); if (e) e.style.display = pov || !jcurView.arr3 ? 'none' : ''; });
-  const cb = document.getElementById('jcur3d-cut'); if (cb) { cb.classList.toggle('active', jcurView.cut3); cb.setAttribute('aria-pressed', String(jcurView.cut3)); }
+  const row = document.getElementById('jcur3d-sp-row'); if (row) row.style.display = jcurView.s3 === 'pov' || !jcurView.arr3 ? 'none' : '';
 }
-// 3D の下端のバー。「環電流」タブを開いていて電流密度があるときだけ出す
+// ver31: 3D の左上の［設定］。NICS と環電流で同じボタンを使い、開いているタブのほうを開く
+function _viewer3dSettingsSync() {
+  const b = document.getElementById('nics-3d-settings-btn'); if (!b) return;
+  const on = (activeTab === 'nics' && !!parsedResult?.nics2d) || (activeTab === 'jcur' && !!currentJvec);
+  b.style.display = on ? '' : 'none';
+}
+window.openViewer3DSettings = function() { if (activeTab === 'jcur') openJcur3DSettings(); else openNics3DSettings(); };
+// 3D の下端のバー。「環電流」タブを開いていて電流密度があるときだけ出す。
+//   ver31: バーには見ながら動かすもの（等値面の入/切・isovalue・流れの再生）だけ。見た目・矢印・切り口・流れの動きと速さは 3D の左上の［設定］へ
 function _jcurBarRender() {
   const bar = document.getElementById('jcur3d-bar'); if (!bar) return;
   const jv = currentJvec, on = !!jv && activeTab === 'jcur';
+  _viewer3dSettingsSync();
   bar.hidden = !on;
-  if (!on) { bar.innerHTML = ''; return; }
+  if (!on) { bar.innerHTML = ''; document.getElementById('jcur-3d-settings-dialog')?.close(); return; }
   const JA = lang !== 'en', ok = !!_jcur3dGrid(jv);
+  const flowSw = _swRow('jcur3d-flow', _jcurFlowPlaying, JA ? '流れを再生' : 'Play flow', 'setJcur3dFlowOn(this.checked)');
   if (!ok) {
     bar.innerHTML = `<span>${jv.kind === 'acid'
       ? (JA ? '3D：この ACID の数値は 3D 表示より前に保存したものです。.txt を読み込み直すと使えます。' : '3D: this ACID data was stored before 3D display existed — load the .txt again.')
-      : (JA ? '3D：GIMIC の <code>acid.vti</code> も一緒に読み込むと、ACID の等値面を表示できます。' : '3D: load GIMIC\'s <code>acid.vti</code> as well to show the ACID isosurface.')}</span>
-      <button class="small-btn ui-toggle" id="jcur3d-cut" type="button" onclick="toggleJcurCut()">${JA ? '切り口' : 'Slice'}</button>${_jcurFlowGrid(jv) ? _jcurFlowControls(JA) : ''}`;
-    _syncJcur3dUI(); return;
-  }
-  const povTip = JA ? 'AICD ＋ POV-Ray と同じ色・光・矢印の形。分子も同じ細い棒に替わります' : 'Same colours, lighting and arrows as AICD + POV-Ray; the molecule switches to thin sticks';
-  const seg = JCUR3D_STYLES.map(([k, ja, en]) => `<button class="seg-btn" type="button" data-k="${k}" onclick="setJcur3dStyle('${k}')"${k === 'pov' ? ` title="${povTip}"` : ''}>${JA ? ja : en}</button>`).join('');
-  const ik = _jcurIsoKey();
-  bar.innerHTML = `<button class="small-btn ui-toggle" id="jcur3d-btn" type="button" aria-pressed="false" onclick="toggleJcur3d()">${JA ? 'ACID の等値面' : 'ACID isosurface'}</button>
-    <div class="set-seg" id="jcur3d-style" role="group">${seg}</div>
+      : (JA ? '3D：GIMIC の <code>acid.vti</code> も一緒に読み込むと、ACID の等値面を表示できます。' : '3D: load GIMIC\'s <code>acid.vti</code> as well to show the ACID isosurface.')}</span>${_jcurFlowGrid(jv) ? flowSw : ''}`;
+  } else {
+    const ik = _jcurIsoKey();
+    bar.innerHTML = `${_swRow('jcur3d-btn', jcur3dOn, JA ? 'ACID の等値面' : 'ACID isosurface', 'setJcur3dOn(this.checked)')}
     <div class="jcur3d-group"><label for="jcur3d-iso">isovalue</label>
     <input type="range" id="jcur3d-iso" class="range-sub" min="-4" max="-0.5" step="0.01" value="${Math.log10(jcurView[ik])}" oninput="setJcur3dIso(this.value)" onchange="setJcur3dIso(this.value,true)" aria-label="isovalue">
-    <span class="jb-val" id="jcur3d-iso-val">${_fmtJcurIso(jcurView[ik])}</span></div>
-    <div class="jcur3d-group"><button class="small-btn ui-toggle" id="jcur3d-arr" type="button" onclick="toggleJcur3dArrows()">${JA ? '矢印' : 'Arrows'}</button>
-    <input type="range" id="jcur3d-sp" class="range-sub" min="0.3" max="1.2" step="0.05" value="${jcurView.sp3}" oninput="setJcur3dSpacing(this.value)" onchange="setJcur3dSpacing(this.value,true)" aria-label="${JA ? '矢印の間隔' : 'Arrow spacing'}">
-    <span class="jb-val" id="jcur3d-sp-val">${jcurView.sp3.toFixed(2)} bohr</span></div>
-    <button class="small-btn ui-toggle" id="jcur3d-cut" type="button" onclick="toggleJcurCut()" title="${JA ? '2D の図で切っている面を 3D に重ねる' : 'Show the 2D plot\'s plane in 3D'}">${JA ? '切り口' : 'Slice'}</button>
-    ${_jcurFlowControls(JA)}
+    <input class="ui-field" type="number" id="jcur3d-iso-num" min="0.0001" max="0.316" step="any" value="${_fmtJcurIso(jcurView[ik])}" onchange="setJcur3dIsoNum(this.value)" aria-label="isovalue" style="width:76px"></div>
+    ${flowSw}
     <span id="jcur3d-status"></span>`;
+  }
+  _syncJcur3dUI();
+  const d = document.getElementById('jcur-3d-settings-dialog');
+  if (d?.open && !d.contains(document.activeElement)) renderJcur3DSettings();
+}
+function renderJcur3DSettings() {
+  const JA = lang !== 'en', jv = currentJvec, body = document.getElementById('jcur-3d-settings-body'); if (!body) return;
+  document.getElementById('jcur-3d-settings-title').textContent = JA ? '環電流の 3D 表示設定' : 'Ring current 3D display settings';
+  document.getElementById('jcur-3d-settings-close').textContent = JA ? '閉じる' : 'Close';
+  if (!jv) { body.innerHTML = ''; return; }
+  const ok = !!_jcur3dGrid(jv), flow = ok || !!_jcurFlowGrid(jv);
+  const povTip = JA ? 'AICD ＋ POV-Ray と同じ色・光・矢印の形。分子も同じ細い棒に替わります' : 'Same colours, lighting and arrows as AICD + POV-Ray; the molecule switches to thin sticks';
+  const seg = JCUR3D_STYLES.map(([k, ja, en]) => `<button class="seg-btn" type="button" data-k="${k}" onclick="setJcur3dStyle('${k}')"${k === 'pov' ? ` title="${povTip}"` : ''}>${JA ? ja : en}</button>`).join('');
+  body.innerHTML = (ok ? `<div class="orb-grp" style="margin-top:12px">
+      <div class="orb-row"><span class="orb-lbl">${JA ? '見た目' : 'Look'}</span><div class="set-seg" id="jcur3d-style" role="group">${seg}</div></div></div>
+    <div class="orb-grp">${_swRow('jcur3d-arr', jcurView.arr3, JA ? '矢印を表示' : 'Show arrows', 'setJcurArrows3(this.checked)')}
+      <div class="orb-row" id="jcur3d-sp-row"><span class="orb-lbl">${JA ? '間隔' : 'Spacing'}</span>${_rangeNum('jcur3d-sp', +(0.3 * BOHR).toFixed(3), +(1.2 * BOHR).toFixed(3), 0.01, jcurView.sp3 * BOHR, 2, 'Å', 'setJcur3dSpacing', JA ? '矢印の間隔（Å）' : 'Arrow spacing (Å)')}</div></div>` : '')
+    + `<div class="orb-grp"${ok ? '' : ' style="margin-top:12px"'}>${_swRow('jcur3d-cut', jcurView.cut3, JA ? '2D の図の切り口を重ねる' : 'Show the 2D plot\'s plane', 'setJcurCut3(this.checked)')}</div>`
+    + (flow ? `<div class="orb-grp">
+      <div class="orb-row"><label class="orb-lbl" for="jcur3d-flow-style">${JA ? '動き' : 'Animation'}</label><select id="jcur3d-flow-style" class="ui-field" onchange="setJcurFlowStyle(3,this.value)">${_jcurFlowStyleOptions(jcurView.flow3, JA)}</select></div>
+      <div class="orb-row"><span class="orb-lbl">${JA ? '速さ' : 'Speed'}</span>${_rangeNum('jcur3d-speed', 0.25, 3, 0.25, jcurView.speed3, 2, JA ? '倍' : '×', 'setJcur3dSpeed', JA ? '流れの速さ' : 'Flow speed')}</div>
+      <div class="small-muted">${JA ? '流れは電流の向きを見せるためのもので、速さは表示用です。' : 'The flow shows the current direction; its speed is illustrative.'}</div></div>` : '');
+  // 3D の間隔のスライダーは離したとき（change）に矢印を作り直す
+  const sp = document.getElementById('jcur3d-sp'), spn = document.getElementById('jcur3d-sp-num');
+  if (sp) sp.addEventListener('change', () => setJcur3dSpacingDone());
+  if (spn) spn.addEventListener('change', () => setJcur3dSpacingDone());
   _syncJcur3dUI();
 }
+window.openJcur3DSettings = function() {
+  if (!currentJvec || activeTab !== 'jcur') return;
+  renderJcur3DSettings();
+  const d = document.getElementById('jcur-3d-settings-dialog');
+  if (!d.open) { for (const k of ['left', 'top', 'margin']) d.style.removeProperty(k); d.showModal(); }
+};
 window._jcurBarRender = _jcurBarRender;
 // ドロップされた .vti から、ベクトルの配列を持つもの（jvec.vti）を選ぶ。jmod.vti / acid.vti はスカラーなので読まない
 async function attachDroppedVti(vtis) {
@@ -12299,8 +12485,8 @@ window.jcurFilePicked = async function(input) {
   const all = [...(input.files || [])], f = all[0]; input.value = '';
   if (!f) return;
   const vt = all.filter(x => _isVti(x.name));   // ver31: jvec.vti と acid.vti をまとめて選べる
-  if (vt.length) await attachDroppedVti(vt);
-  else if (await _isAcidFile(f)) await attachAcidFile(f);   // ver31: ACID の .txt
+  if (vt.length) await _attachVtiToActive(vt);   // ver31: NMR のログにだけ
+  else if (await _isAcidFile(f)) await _acidAttachNamed(await readFileText(f), f.name, null);   // ver31: ACID の .txt は名前で組にする
   else showToast(lang === 'ja' ? `${f.name} は GIMIC の jvec.vti でも ACID の .txt でもありません` : `${f.name} is neither GIMIC's jvec.vti nor an ACID .txt`);
 };
 window.removeJvec = function() {
@@ -12599,7 +12785,7 @@ let _nicsPlane = null;
 function _nicsPlaneUpdate() {
   const g = parsedResult?.nics2d;
   const available = !!(g && activeTab === 'nics');
-  document.getElementById('nics-3d-settings-btn').style.display = available ? '' : 'none';
+  _viewer3dSettingsSync();   // ver31: 環電流と共通のボタン
   if (!available) document.getElementById('nics-3d-settings-dialog').close();
   const want = !!(scene && available && (nicsView.plane3 || nicsView.axes3));
   if (!want) { if (_nicsPlane) _nicsPlane.visible = false; return; }
@@ -12718,15 +12904,15 @@ window.openNics3DSettings = function() {
   d.innerHTML = `<div class="axis-dialog-head"><h2>${JA?'NICS の 3D 表示設定':'NICS 3D display settings'}</h2><button type="button" class="small-btn ui-secondary" onclick="this.closest('dialog').close()">${JA?'閉じる':'Close'}</button></div>
     ${sw('plane3',JA?'平面を表示':'Show plane')}
     <label class="set-toggle-row"><span>${JA?'平面の色':'Plane colour'}</span><input type="color" class="ui-color" value="${v.planeColor}" oninput="setNics3DOption('planeColor',this.value)"></label>
-    <label class="set-toggle-row"><span>${JA?'平面の不透明度':'Plane opacity'}</span><input type="range" min="0" max="1" step="0.01" value="${v.planeOpacity}" oninput="setNics3DOption('planeOpacity',this.value)"></label>
+    <label class="set-toggle-row"><span>${JA?'平面の不透明度':'Plane opacity'}</span><input type="range" id="nics3d-op" min="0" max="1" step="0.01" value="${v.planeOpacity}" oninput="setNics3DOption('planeOpacity',this.value,this)"><input class="ui-field" type="number" id="nics3d-op-num" min="0" max="1" step="0.01" value="${(+v.planeOpacity).toFixed(2)}" oninput="setNics3DOption('planeOpacity',this.value,this)" aria-label="${JA?'平面の不透明度':'Plane opacity'}" style="width:64px"></label>
     ${sw('axes3',JA?'軸・目盛りを表示':'Show axes and ticks')}
     <label class="set-toggle-row"><span>${JA?'軸・文字の色':'Axes and text colour'}</span><input type="color" class="ui-color" value="${v.axisColor}" oninput="setNics3DOption('axisColor',this.value)"></label>`;
   if (!d.open) d.showModal();
 };
-window.setNics3DOption = function(key,value) {
+window.setNics3DOption = function(key,value,src) {
   if (['plane3','axes3'].includes(key)) { if (typeof value !== 'boolean') return; }
   else if (['planeColor','axisColor'].includes(key)) { if (!/^#[0-9a-f]{6}$/i.test(value)) return; }
-  else if (key === 'planeOpacity') { value = Number(value); if (!Number.isFinite(value)) return; value = Math.max(0,Math.min(1,value)); }
+  else if (key === 'planeOpacity') { value = parseFloat(value); if (!Number.isFinite(value)) return; value = Math.max(0,Math.min(1,value)); _syncRangeNum('nics3d-op', value, 2, src); }   // ver31: スライダーと数値の欄
   else return;
   nicsView[key] = value; _saveNicsView(); _nicsPlaneUpdate();
 };
@@ -14585,7 +14771,7 @@ function parseLogText(text, filename, jobIdx = null) {
 
 async function loadTextAsFile(text, filename, saveToRecentFlag) {
   // ver31: ACID の .txt（フォルダ・サーバーの一覧からはログと同じに開かれる）は、いまのファイルに添える
-  if (_isAcidText(text.slice(0, 400))) { await attachAcid(text, filename); return; }
+  if (_isAcidText(text.slice(0, 400))) { await _acidAttachNamed(text, filename, null); return; }   // ver31: 名前で組にする
   const result = parseLogText(text, filename);
   if (!result) { showError(t('err-no-geo')); return; }
   // ver19: サーバー一覧から開いたときだけ、その相対パスを控える。
@@ -14598,6 +14784,29 @@ async function loadTextAsFile(text, filename, saveToRecentFlag) {
   result.srcPath = _locOpenedPath;
   _locOpenedPath = null;
   if (saveToRecentFlag) saveRecent(filename, result, text);
+
+  // ver31: 同じ名前のログが開いていれば、増やさずにそれへ切り替える。以前は開くたびに増え、同じ名前が並んだうえ、
+  //   本文・.fchk・ACID・選択の保存先（どれもファイル名で決まる）を2つで取り合っていた（todo.md 2026-10-20）。
+  //   中身が変わっていれば（計算が進んだログなど）その場で読み直す。追跡と同じ jobApplyNewText() なので、
+  //   視点・選択・表示中のジョブ・添えた .fchk / ACID は残る。別のフォルダの同じ名前のログは見分けられない（保存先が同じため）
+  const same = sessions.find(x => x.filename === filename && _sessKind(x) === 'log');
+  if (same) {
+    const changed = !same.parsedResult || same.parsedResult.sourceText !== text;
+    if (same.id !== activeSessionId) window.activateSession(same.id);
+    if (result.srvPath) same.srvPath = result.srvPath;   // 手元から開いていたログを一覧から開き直したら、追跡できるように
+    if (changed) {
+      const oldSrc = same.parsedResult && same.parsedResult.srcPath;
+      jobApplyNewText(same, text);
+      if (same.parsedResult) same.parsedResult.srcPath = result.srcPath || oldSrc || null;
+      // 追跡は「構造が増えたときだけ」組み直すが、開き直しは中身がまるごと違うこともあるので、いつも組み直す
+      try { rebuildMainUI(); } catch (e) { console.error('reopen rebuild:', e); }
+    }
+    if (!_restoringOpen) showToast(lang === 'ja'
+      ? (changed ? `${filename} は開いていたので、新しい中身で読み直しました` : `${filename} は開いています（切り替えました）`)
+      : (changed ? `${filename} was already open — reloaded with the new contents` : `${filename} is already open — switched to it`));
+    saveOpenFiles();
+    return { id: same.id, reused: true, changed };
+  }
 
   // ── Create or replace session ──────────────────────────────────────────────
   flushFileState(); // ver14: いま開いているファイルの選択を書き出してから切り替える
@@ -14675,6 +14884,7 @@ async function loadTextAsFile(text, filename, saveToRecentFlag) {
   if (!_restoringOpen) showToast(_loadMsg);
   if (typeof setTab === 'function') setTab(result.isTDDFT ? 'spectrum' : 'structure');
   saveOpenFiles();   // ver16: 次に開いたときこのファイルを戻せるように
+  return { id: sess.id, reused: false, changed: true };   // ver31: 呼ぶ側が「開いたファイル」を知るため（開けなければ undefined）
 }
 
 function isTDDFTLog(text, result) {
@@ -15277,6 +15487,15 @@ function _baseName(name){ return (name||'').replace(/\.[^.]+$/,'').toLowerCase()
 function _isFchk(name){ return /\.(fchk|fch)$/i.test(name||''); }
 function _isCube(name){ return /\.(cube|cub)$/i.test(name||''); }   // ver20
 function _isLog(name){ return /\.(log|out|txt)$/i.test(name||''); }
+// ver31: 一覧で .fchk と組にする（「+ fchk」を付ける）ログ。.txt は同じ名前の .log / .out が無いときだけ
+//   （あれば .txt は ACID の出力で、押しても .fchk は読まない。中身は開くまで読まないので名前で見分ける）
+function _sessHasFchk(id){ return id === activeSessionId ? !!currentFchk : !!(sessions.find(x => x.id === id) || {}).fchk; }
+function _listLogTakesFchk(name, names){
+  if (/\.(log|out)$/i.test(name||'')) return true;
+  if (!/\.txt$/i.test(name||'')) return false;
+  const bn = _baseName(name);
+  return !names.some(o => /\.(log|out)$/i.test(o) && _baseName(o) === bn);
+}
 function _isMol(name){ return /\.(mol|sdf)$/i.test(name||''); }
 function _isXyz(name){ return /\.xyz$/i.test(name||''); }
 function _isGjf(name){ return /\.(gjf|com)$/i.test(name||''); }
@@ -15939,9 +16158,9 @@ async function handleFiles(fileList) {
       // Load the first log (others ignored for now), then attach matching fchk if present
       const logFile = logs[0];
       const text = await readFileText(logFile);
-      const before = activeSessionId;
-      await loadTextAsFile(text, logFile.name, true);
-      const logId = activeSessionId !== before ? activeSessionId : null;   // 読めなかったら null
+      // ver31: 同じ名前のログが開いていると、新しく作らずにそれへ切り替える。どちらでも開いたログの id が返る
+      const opened = await loadTextAsFile(text, logFile.name, true);
+      const logId = opened ? opened.id : null;   // 読めなかったら null
       // ver21: 組にするのは同じ名前の .fchk だけで、中身も確かめる（FCHK PAIRING 節）。
       //   以前は名前が違っても .fchk が1つなら付けていた。名前の違う .fchk は単独で開く
       const fchkFile = fchks.find(f => _baseName(f.name) === _baseName(logFile.name));
@@ -15969,8 +16188,8 @@ async function handleFiles(fileList) {
     } else if ((vtis.length || acids.length) && !cubes.length) {
       // ver31: jvec.vti / ACID の .txt だけなら、いま開いているファイルに添える（構造は持たないので単独では開かない）
       if (!sessions.length) showToast(lang === 'ja' ? '電流密度（.vti / ACID の .txt）はログか .fchk と一緒に開いてください' : 'Open the current density (.vti / ACID .txt) together with a log or .fchk');
-      else if (vtis.length) await attachDroppedVti(vtis);
-      else await attachAcidFile(acids[0]);
+      else if (vtis.length) await _attachVtiToActive(vtis);   // ver31: NMR のログにだけ
+      else await _acidAttachNamed(await readFileText(acids[0]), acids[0].name, null);   // ver31: 名前で組にする
     } else if (cubes.length) {
       // ver20: .cube だけなら、cube の原子で構造を出して「スピン」タブへ
       const ctext = await readFileText(cubes[0]);
@@ -16262,9 +16481,9 @@ function srvPaintList(id, withMeta, JA){
     // .fchk は独立した行にせず、同名のログの行に印として出す（一緒に読み込まれるため）
     // ver21: 相手はログに限る。以前は「.fchk 以外」で判定していたので、.gjf にも「+ fchk」が付き
     //   （.gjf を開いても .fchk は読まない）、.gjf と .fchk だけのフォルダでは .fchk が一覧から消えて開けなかった
-    const bn = _baseName(e.name);
-    if (_isFchk(e.name) && srvEntries.some(o => !o.isDir && _isLog(o.name) && _baseName(o.name) === bn)) return;
-    const pair = (_isLog(e.name) && srvEntries.some(o => !o.isDir && _isFchk(o.name) && _baseName(o.name) === bn))
+    const bn = _baseName(e.name), fnames = srvEntries.filter(o => !o.isDir).map(o => o.name);
+    if (_isFchk(e.name) && fnames.some(o => _listLogTakesFchk(o, fnames) && _baseName(o) === bn)) return;
+    const pair = (_listLogTakesFchk(e.name, fnames) && fnames.some(o => _isFchk(o) && _baseName(o) === bn))
       ? '<span class="srv-pair">+ fchk</span>' : '';
     const meta = withMeta
       ? `<span class="srv-meta">${srvFmtSize(e.size)}</span><span class="srv-meta">${srvFmtTime(e.mtime)}</span>` : '';
@@ -16339,16 +16558,22 @@ window.srvOpenAt = async function(i){
       await loadStructAsFile(text, e.name);
     } else if (_isFchk(e.name)) {
       await openFchkFile(text, e.name, dir + e.href);   // ver21: 同じフォルダ・同じ名前のログが開いていればそちらに付ける
+    } else if (_isAcidText(text.slice(0, 400))) {
+      // ver31: ACID の .txt は同じ名前のログに添える。開いていなければ同じフォルダの同じ名前のログを先に開く
+      _srvOpenedPath = null;
+      const li = list.findIndex(o => !o.isDir && /\.(log|out)$/i.test(o.name) && _baseName(o.name) === _baseName(e.name));
+      await _acidAttachNamed(text, e.name, li >= 0 && list === srvEntries ? () => window.srvOpenAt(li) : null);
     } else {
-      const before = activeSessionId;
-      await loadTextAsFile(text, e.name, true);
-      if (activeSessionId !== before) {
+      const opened = await loadTextAsFile(text, e.name, true);
+      if (opened) {
         jobSeedBytes();   // ver20: 追跡の「続きの位置」を、いま読んだ大きさから始める
         jobAutoWatch();   // ver27: 走っているログなら、そのまま追跡を入れる
         // ドロップしたときと同じ規則：同名の .fchk があれば一緒に読む。
         // ver21: 付ける前に中身を確かめる。合わなければ別のファイルとして開く（FCHK PAIRING 節）
+        // ver31: 開いていたログへ切り替えただけで、もう .fchk が付いているなら読み直さない（15MB 級で重いため）
         const pair = list.find(o => !o.isDir && _isFchk(o.name) && _baseName(o.name) === _baseName(e.name));
-        await pairFchkAfterLog(pair ? { text: await srvGetText(dir + pair.href), name: pair.name, srcPath: dir + pair.href } : null);
+        if (!opened.reused || !_sessHasFchk(opened.id))
+          await pairFchkAfterLog(pair ? { text: await srvGetText(dir + pair.href), name: pair.name, srcPath: dir + pair.href } : null);
       }
     }
   } catch(err) {
@@ -16701,8 +16926,8 @@ function locPaintList(JA){
   order.forEach(i => {
     const name = locEntries[i].name, bn = _baseName(name);
     // .fchk は独立した行にせず、同名のログの行に印として出す（一緒に読み込まれるため。サーバー節と同じ規則）
-    if (_isFchk(name) && names.some(o => _isLog(o) && _baseName(o) === bn)) return;
-    const pair = (_isLog(name) && names.some(o => _isFchk(o) && _baseName(o) === bn))
+    if (_isFchk(name) && names.some(o => _listLogTakesFchk(o, names) && _baseName(o) === bn)) return;   // ver31: .txt の ACID は相手にしない
+    const pair = (_listLogTakesFchk(name, names) && names.some(o => _isFchk(o) && _baseName(o) === bn))
       ? '<span class="srv-pair">+ fchk</span>' : '';
     locRows.push({ kind: 'file', idx: i });
     html += row('file', name, pair);
@@ -16739,10 +16964,15 @@ window.locRowAt = async function(i){
       await loadStructAsFile(text, e.name);
     } else if (_isFchk(e.name)) {
       await openFchkFile(text, e.name, e.rel);   // 同じフォルダ・同じ名前のログが開いていればそちらに付ける
+    } else if (_isAcidText(text.slice(0, 400))) {
+      // ver31: ACID の .txt は同じ名前のログに添える。開いていなければ同じフォルダの同じ名前のログを先に開く
+      _locOpenedPath = null;
+      const li = locListing().files.find(j => /\.(log|out)$/i.test(locEntries[j].name) && _baseName(locEntries[j].name) === _baseName(e.name));
+      const ri = li != null ? locRows.findIndex(o => o.kind === 'file' && o.idx === li) : -1;
+      await _acidAttachNamed(text, e.name, ri >= 0 ? () => window.locRowAt(ri) : null);
     } else {
-      const before = activeSessionId;
-      await loadTextAsFile(text, e.name, true);
-      if (activeSessionId !== before) {
+      const opened = await loadTextAsFile(text, e.name, true);
+      if (opened && (!opened.reused || !_sessHasFchk(opened.id))) {   // ver31: 開いていたログで、もう .fchk が付いていれば読み直さない
         // ドロップしたときと同じ規則：同じ名前の .fchk が同じフォルダにあれば一緒に読む。
         // 付ける前に中身を確かめる。合わなければ別のファイルとして開く（FCHK PAIRING 節）
         const pi = locListing().files.find(j => _isFchk(locEntries[j].name) && _baseName(locEntries[j].name) === _baseName(e.name));
@@ -18717,7 +18947,8 @@ function nicsRings(atoms){
 }
 // NICS placements use molecular coordinates in Å; Bq are never added to bonded atoms.
 function resetNicsPlacement() {
-  const defaults = {mode:'rings',atoms:'',plane:'xy','plane-atoms':'',height:'1',umin:'-4',umax:'4',vmin:'-4',vmax:'4',step:'0.2',coords:''};
+  // ver31: U・V の範囲は空欄＝分子に合わせる（nicsFitFill()）。以前は ±4 Å の決め打ちで、大きな分子ははみ出した
+  const defaults = {mode:'rings',atoms:'',plane:'xy','plane-atoms':'',height:'1',umin:'',umax:'',vmin:'',vmax:'',step:'0.2',coords:''};
   for (const [k,v] of Object.entries(defaults)) document.getElementById('gjf-nics-'+k).value = v;
 }
 // Accept old saved dropdown values while storing new independent selections as CSV.
@@ -18752,15 +18983,18 @@ function syncNicsSliders() {
   }
 }
 function nicsValue(k) { return document.getElementById('gjf-nics-'+k)?.value.trim() ?? ''; }
+// ver31: 欄の名前とエラーの文は言語に合わせる（以前は「日本語 / English」を1つの文につないでいた）
+const _nicsT = (ja, en) => lang === 'en' ? en : ja;
+const NICS_FIELD_NAMES = { height:['高さ','Height'], umin:['U 最小','U min'], umax:['U 最大','U max'], vmin:['V 最小','V min'], vmax:['V 最大','V max'], step:['間隔','Step'] };
 function nicsNumber(k) {
-  const t = nicsValue(k), v = Number(t);
-  if (!t || !Number.isFinite(v)) throw Error(`${k}: 有効な数値を入力してください / Enter a finite number`);
+  const t = nicsValue(k), v = Number(t), [ja, en] = NICS_FIELD_NAMES[k] || [k, k];
+  if (!t || !Number.isFinite(v)) throw Error(_nicsT(`${ja}：数値を入力してください`, `${en}: enter a number`));
   return v;
 }
 function nicsAtomIndices(atoms, text, allowDefault=false) {
   if (!text && allowDefault) return atoms.map((a,i)=>a.symbol !== 'H' ? i : -1).filter(i=>i>=0);
   const tokens = text.split(/[\s,]+/).filter(Boolean);
-  if (!tokens.length || tokens.some(t=>!/^\d+$/.test(t) || +t<1 || +t>atoms.length)) throw Error('原子番号は 1〜'+atoms.length+' で指定してください / Invalid atom numbers');
+  if (!tokens.length || tokens.some(t=>!/^\d+$/.test(t) || +t<1 || +t>atoms.length)) throw Error(_nicsT(`原子番号は 1〜${atoms.length} で指定してください`, `Atom numbers must be 1–${atoms.length}`));
   return [...new Set(tokens.map(t=>+t-1))];
 }
 function nicsFrame(atoms) {
@@ -18771,7 +19005,7 @@ function nicsFrame(atoms) {
     return {o:[0,0,0],u,v,n};
   }
   const ids = nicsAtomIndices(atoms,nicsValue('plane-atoms'),true), p = planeOf(atoms,ids);
-  if (!p) throw Error('平面には同一直線上にない3原子以上が必要です / Select at least 3 non-collinear atoms');
+  if (!p) throw Error(_nicsT('平面には、一直線に並ばない3原子以上が必要です', 'A plane needs at least 3 atoms that are not in a line'));
   let n = [p.normal.x,p.normal.y,p.normal.z];
   const big = n.reduce((m,x,i)=>Math.abs(x)>Math.abs(n[m])?i:m,0);
   if(n[big]<0) n=n.map(x=>-x);
@@ -18785,47 +19019,63 @@ function nicsPlacement(atoms,mode) {
   try {
     if (mode==='manual') {
       const rows=nicsValue('coords').split(/\n/).filter(t=>t.trim());
-      if(!rows.length) throw Error('Bq の座標を入力してください / Enter Bq coordinates');
-      if(rows.length>20000) throw Error('Bq は最大20000点です / Maximum 20000 points');
-      result.points=rows.map((line,i)=>{const t=line.trim().replace(/^Bq\s+/i,'').split(/[\s,]+/); if(t.length!==3 || t.some(x=>!Number.isFinite(Number(x)))) throw Error(`座標 ${i+1} 行目: X Y Z を入力 / Enter X Y Z`); return {x:+t[0],y:+t[1],z:+t[2]};});
+      if(!rows.length) throw Error(_nicsT('Bq の座標を入力してください', 'Enter the Bq coordinates'));
+      if(rows.length>20000) throw Error(_nicsT('Bq は 20000 点までです', 'Up to 20000 Bq points'));
+      result.points=rows.map((line,i)=>{const t=line.trim().replace(/^Bq\s+/i,'').split(/[\s,]+/); if(t.length!==3 || t.some(x=>!Number.isFinite(Number(x)))) throw Error(_nicsT(`座標の ${i+1} 行目：X Y Z の3つを書いてください`, `Coordinates line ${i+1}: write X Y Z`)); return {x:+t[0],y:+t[1],z:+t[2]};});
     } else if(mode==='atoms') {
       const ids=nicsAtomIndices(atoms,nicsValue('atoms')), h=nicsNumber('height');
       const c=ids.reduce((c,i)=>c.map((v,k)=>v+atoms[i][['x','y','z'][k]]/ids.length),[0,0,0]);
       let n=[0,0,0];
-      if(h!==0) { const p=planeOf(atoms,ids); if(!p) throw Error('高さを指定する場合は同一直線上にない3原子以上を指定してください / Height requires 3 non-collinear atoms'); n=[p.normal.x,p.normal.y,p.normal.z]; const k=n.reduce((m,x,i)=>Math.abs(x)>Math.abs(n[m])?i:m,0); if(n[k]<0)n=n.map(x=>-x); }
+      if(h!==0) { const p=planeOf(atoms,ids); if(!p) throw Error(_nicsT('高さを付けるには、一直線に並ばない3原子以上を指定してください', 'A height needs at least 3 atoms that are not in a line')); n=[p.normal.x,p.normal.y,p.normal.z]; const k=n.reduce((m,x,i)=>Math.abs(x)>Math.abs(n[m])?i:m,0); if(n[k]<0)n=n.map(x=>-x); }
       result.points=[{x:c[0]+h*n[0],y:c[1]+h*n[1],z:c[2]+h*n[2]}];
     } else {
       const f=nicsFrame(atoms), h=nicsNumber('height'), lo=nicsNumber('umin'), hi=nicsNumber('umax'), bottom=nicsNumber('vmin'), top=nicsNumber('vmax'), step=nicsNumber('step');
-      if(hi<=lo || top<=bottom || step<=0) throw Error('最大値 > 最小値、間隔 > 0 にしてください / Invalid bounds or spacing');
+      if(hi<=lo || top<=bottom || step<=0) throw Error(_nicsT('最大は最小より大きく、間隔は 0 より大きくしてください', 'Max must exceed min, and the step must be above 0'));
       const nx=Math.floor((hi-lo)/step+1e-8)+1, ny=Math.floor((top-bottom)/step+1e-8)+1;
-      if(nx<4 || ny<4) throw Error('2D NICS は各方向4点以上にしてください / At least 4 points per axis');
-      if(nx*ny>20000) throw Error(`Bq ${nx*ny} 点：最大20000点です。範囲を狭めるか間隔を広げてください / Too many points`);
+      if(nx<4 || ny<4) throw Error(_nicsT('2D NICS は各方向に 4 点以上にしてください', 'A 2D NICS grid needs at least 4 points per axis'));
+      if(nx*ny>20000) throw Error(_nicsT(`Bq が ${nx*ny} 点あります。20000 点までにするため、範囲を狭めるか間隔を広げてください`, `${nx*ny} Bq points; narrow the range or widen the step to stay within 20000`));
       const at=(u,v)=>f.o.map((x,k)=>x+u*f.u[k]+v*f.v[k]+h*f.n[k]);
       for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const q=at(lo+i*step,bottom+j*step);result.points.push({x:q[0],y:q[1],z:q[2]});}
       result.corners=[[lo,bottom],[lo+(nx-1)*step,bottom],[lo+(nx-1)*step,bottom+(ny-1)*step],[lo,bottom+(ny-1)*step]].map(([u,v])=>at(u,v));
       result.title=`2D NICS ${nx} x ${ny}, spacing ${step} Angstrom, plane ${nicsValue('plane')}, height ${h}`;
     }
     if(!result.title)result.title=`NICS ${result.points.length} Bq (${mode})`;
-    if(result.points.some(p=>atoms.some(a=>Math.hypot(p.x-a.x,p.y-a.y,p.z-a.z)<0.05))) throw Error('Bq が実原子に近すぎます（0.05 Å未満）。高さ・座標・間隔を変更してください / Bq overlaps a real atom');
+    if(result.points.some(p=>atoms.some(a=>Math.hypot(p.x-a.x,p.y-a.y,p.z-a.z)<0.05))) throw Error(_nicsT('原子と 0.05 Å 未満に重なる Bq があります。高さ・座標・間隔を変えてください', 'A Bq point lies within 0.05 Å of an atom; change the height, coordinates or step'));
   } catch(e) { result.error=e.message; result.points=[]; delete result.corners; }
   return result;
 }
+// ver31: U・V の範囲を分子の範囲＋1.5 Å に合わせる。以前はボタンを押したときだけで、既定は ±4 Å の決め打ちだった。
+//   いまは範囲の欄が空なら updateGJFPreview() が自動で呼ぶ（シートを初めて選んだとき・平面や基準原子を変えたとき・
+//   そのファイルで初めて作成タブを開いたとき）。手で動かした値は、平面を変えるまで上書きしない。
+//   onlyBlank なら4つとも空のときだけ埋める（1つの欄を打ち直している途中——"-" だけの間は値が空になる——で上書きしないため）。
+//   平面が決まらない（基準原子の指定が足りない）ときは何もしない＝エラーは nicsPlacement() が出す
+const NICS_FIT_MARGIN = 1.5;
+function nicsFitFill(atoms, onlyBlank) {
+  if (onlyBlank && ['umin','umax','vmin','vmax'].some(k => nicsValue(k) !== '')) return false;
+  let f; try { f = nicsFrame(atoms); } catch (_) { return false; }
+  for (const [axis,vec] of [['u',f.u],['v',f.v]]) {
+    const values = atoms.map(a=>[a.x,a.y,a.z].reduce((t,x,k)=>t+(x-f.o[k])*vec[k],0));
+    document.getElementById(`gjf-nics-${axis}min`).value = (Math.min(...values)-NICS_FIT_MARGIN).toFixed(2);
+    document.getElementById(`gjf-nics-${axis}max`).value = (Math.max(...values)+NICS_FIT_MARGIN).toFixed(2);
+  }
+  return true;
+}
 window.nicsFitBounds=function(){
-  try {
-    const atoms=scanData[currentScanIdx]?.atoms;if(!atoms?.length)return;
-    const f=nicsFrame(atoms);
-    for(const [axis,vec] of [['u',f.u],['v',f.v]]) {
-      const values=atoms.map(a=>[a.x,a.y,a.z].reduce((t,x,k)=>t+(x-f.o[k])*vec[k],0));
-      document.getElementById(`gjf-nics-${axis}min`).value=(Math.min(...values)-1.5).toFixed(2);
-      document.getElementById(`gjf-nics-${axis}max`).value=(Math.max(...values)+1.5).toFixed(2);
-    }
-    updateGJFPreview();
-  } catch(e){showToast(e.message);}
+  const atoms=scanData[currentScanIdx]?.atoms; if(!atoms?.length)return;
+  nicsFitFill(atoms, false); updateGJFPreview();
+};
+// 平面・基準原子を変えたら、前の面の U・V の範囲は意味を持たないので空にして合わせ直す
+window.nicsFrameChanged=function(){
+  for (const k of ['umin','umax','vmin','vmax']) document.getElementById('gjf-nics-'+k).value = '';
+  updateGJFPreview();
 };
 let _nicsCreatePreview=null, _nicsCreateKey='';
 function nicsPreviewUpdate(g) {
   if(!scene)return;
-  const key=JSON.stringify(g && !g.error ? [g.points,g.corners] : null);
+  // ver31: 色は「NICS」タブで同じ面を描く色（nicsView.planeColor）。以前はここだけオレンジ（#d97706）を直書きしていて、
+  //   作るときと結果を見るときで同じ面の色が違った（design/nics-sheet-create-comparison.html の 1 の案A）
+  const col=nicsView.planeColor;
+  const key=JSON.stringify(g && !g.error ? [g.points,g.corners,col] : null);
   if(key===_nicsCreateKey && (!_nicsCreatePreview || _nicsCreatePreview.parent===scene))return;
   _nicsCreateKey=key;
   if(_nicsCreatePreview){ scene.remove(_nicsCreatePreview);_nicsCreatePreview.traverse(o=>{o.geometry?.dispose();o.material?.map?.dispose();o.material?.dispose();});_nicsCreatePreview=null; }
@@ -18834,16 +19084,16 @@ function nicsPreviewUpdate(g) {
   if (g.corners || g.points.length > 200) {
     const geom = new THREE.BufferGeometry();
     geom.setAttribute('position',new THREE.Float32BufferAttribute(g.points.flatMap(p=>[p.x,p.y,p.z]),3));
-    group.add(new THREE.Points(geom,new THREE.PointsMaterial({color:0xd97706,size:3,sizeAttenuation:false,depthWrite:false})));
+    group.add(new THREE.Points(geom,new THREE.PointsMaterial({color:col,size:3,sizeAttenuation:false,depthWrite:false})));
   } else {
     g.points.forEach((p,i) => {
-      const marker = new THREE.Mesh(new THREE.SphereGeometry(0.16,16,12),new THREE.MeshBasicMaterial({color:0xd97706,depthTest:false,depthWrite:false}));
+      const marker = new THREE.Mesh(new THREE.SphereGeometry(0.16,16,12),new THREE.MeshBasicMaterial({color:col,depthTest:false,depthWrite:false}));
       marker.position.set(p.x,p.y,p.z); marker.renderOrder=20; group.add(marker);
-      const label=makeTextSprite(`Bq${i+1}`,undefined,{size:0.28,color:'#d97706',background:false});
+      const label=makeTextSprite(`Bq${i+1}`,undefined,{size:0.28,color:col,background:false});
       label.position.set(p.x,p.y+0.27,p.z); label.renderOrder=21; group.add(label);
     });
   }
-  if(g.corners){const p=g.corners;const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute([p[0],p[1],p[2],p[0],p[2],p[3]].flat(),3));group.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:0xd97706,side:THREE.DoubleSide,transparent:true,opacity:0.12,depthWrite:false})));const edge=new THREE.BufferGeometry();edge.setAttribute('position',new THREE.Float32BufferAttribute([...p,p[0]].flat(),3));group.add(new THREE.Line(edge,new THREE.LineBasicMaterial({color:0xd97706})));}
+  if(g.corners){const p=g.corners;const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute([p[0],p[1],p[2],p[0],p[2],p[3]].flat(),3));group.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:col,side:THREE.DoubleSide,transparent:true,opacity:0.12,depthWrite:false})));const edge=new THREE.BufferGeometry();edge.setAttribute('position',new THREE.Float32BufferAttribute([...p,p[0]].flat(),3));group.add(new THREE.Line(edge,new THREE.LineBasicMaterial({color:col})));}
   group.position.set(-moleculeCentroid.x,-moleculeCentroid.y,-moleculeCentroid.z);group.visible=activeTab==='create';scene.add(group);_nicsCreatePreview=group;
 }
 
@@ -18893,6 +19143,9 @@ function writeGjfForm(o) {
   resetNicsPlacement();
   _gjfLinkFillOptions();   // ver31: 続けて計算の一覧を先に作っておかないと、覚えた値を選べない
   GJF_FIELDS.forEach(id => { const e = document.getElementById(id); if (e && o[id] != null) e.value = o[id]; });
+  // ver31: 以前の既定（±4 Å の決め打ち）のまま覚えた範囲は、空欄＝分子に合わせるに読み替える
+  if (['umin','umax','vmin','vmax'].map(k => o['gjf-nics-'+k]).join() === '-4,4,-4,4')
+    ['umin','umax','vmin','vmax'].forEach(k => { const e = document.getElementById('gjf-nics-'+k); if (e) e.value = ''; });
   if (o['gjf-method'] != null) setGjfLevel('method', o['gjf-method']);
   if (o['gjf-basis'] != null) setGjfLevel('basis', o['gjf-basis']);
   // ver31: トグルだったころに覚えた条件では、続けて計算が切（gjf-link-on が '1' でない）なら「なし」に読み替える
@@ -18983,6 +19236,9 @@ window.applyParsedLevel = function() {
 };
 window.updateGJFPreview = function() {
   syncDeveloperUI();
+  // ver31: 2D NICS シートの範囲が空欄なら分子に合わせてから書く（nicsFitFill()）
+  { const at = scanData[currentScanIdx]?.atoms;
+    if (at?.length && document.getElementById('gjf-jobtype')?.value === 'nics' && document.getElementById('gjf-nics-mode')?.value === 'sheet') nicsFitFill(at, true); }
   syncNicsSliders();
   const p = document.getElementById('gjf-preview');
   if (p) p.value = generateGJFContent();
@@ -19027,7 +19283,8 @@ window.updateGJFPreview = function() {
     const mode = document.getElementById('gjf-nics-mode').value;
     document.getElementById('gjf-nics-placement').hidden = mode === 'rings';
     document.querySelectorAll('[data-nics-mode]').forEach(e => { e.hidden = !e.dataset.nicsMode.split(' ').includes(mode); });
-    if (info) info.textContent = g.error || (g.points.length ? (JA ? `Bq ${g.points.length} 点（${atoms.length + 1} 番から）。3D で配置を確認し、下の .gjf を保存して Gaussian で実行してください。` : `${g.points.length} Bq points, starting at atom ${atoms.length + 1}. Check the 3D preview, save .gjf below and run in Gaussian.`) : (JA ? '平らな環が見つかりません。指定原子・座標入力・シートを選んでください。' : 'No planar rings found. Choose atoms, coordinates or a sheet.'));
+    // ver31: 出すのはエラーと注意だけ。以前の「Bq ○点（○番から）。3D で配置を確認し…」の案内は消した（点の数は 3D とプレビューで分かる）
+    if (info) info.textContent = g.error || (g.points.length ? '' : (JA ? '平らな環が見つかりません。配置で「指定した原子の中心」「座標を直接入力」「2D NICS シート」を選んでください' : 'No planar rings found. Choose another placement.'));
     nicsPreviewUpdate(g);
 
   }
@@ -20425,6 +20682,17 @@ function setupTabs() {
     const pane = document.getElementById('pane-' + tab); if (!pane) return;
     ids.forEach(id => { const c = document.getElementById(id); if (c) pane.appendChild(c); });
   });
+  // ver31: 作成タブは広いとき2列にするので、カードを列の箱に入れ直す（左＝計算条件・続けて計算／右＝引用文献・書き出し。CSS の .create-cols）
+  { const pane = document.getElementById('pane-create');
+    if (pane) {
+      const cols = document.createElement('div'); cols.className = 'create-cols';
+      [['gjf-cond-card','gjf-link-card'], ['gjf-cite-card','gjf-out-card']].forEach(ids => {
+        const col = document.createElement('div'); col.className = 'create-col';
+        ids.forEach(id => { const c = document.getElementById(id); if (c) col.appendChild(c); });
+        cols.appendChild(col);
+      });
+      pane.appendChild(cols);
+    } }
   // ver13: 色 / 視点 / 結合次数 / 画像保存 を3Dの上に浮かせるのはやめた。
   // TAB_CARDS.settings が「設定」タブへ並べ替えるので、ここでは何もしない。
   if (typeof buildViewMenu === 'function') buildViewMenu();
@@ -20496,6 +20764,9 @@ window.setTab = function(tab) {
   // ver9: the scan (and opt-trajectory) animation drives the 3D view AND the
   // structure-tab plots in lockstep, so let it keep running while the user is on
   // either the Scan/Optimization tab or the Structure tab. Other tabs stop it.
+  // ver31: 環電流の 3D は「環電流」タブだけで出す。POV-Ray の見た目は本体の原子・結合を毎フレーム隠しているので、
+  //   タブを離れるときに分子を描き直して戻す（_jcur3dFrame() は隠すだけで、出し直す側を持たない）
+  const leavePov = tab !== activeTab && activeTab === 'jcur' && !!jcur3dGroup?.userData.pov;
   if (tab !== activeTab) {
     const keepScanOpt = (tab === 'opt' || tab === 'structure');
     if (!keepScanOpt) { if (typeof stopScanPlay==='function') stopScanPlay(); if (typeof stopOptPlay==='function') stopOptPlay(); }
@@ -20503,6 +20774,7 @@ window.setTab = function(tab) {
   }
   if(tab!=='edit'){cancelEditSymmetryPreview();clearTimeout(_editSymmTimer);_editSymmPreview=null;}
   activeTab = tab;
+  if (leavePov) { const atoms = scanData[currentScanIdx]?.atoms; if (atoms) buildMolecule(atoms); }
   renderSymmetryPanel(); drawSymmetryOverlay();
   document.querySelectorAll('.tab-btn').forEach(b => {
     const on = b.dataset.tab === tab;
@@ -20549,7 +20821,7 @@ window.setTab = function(tab) {
   if (tab === 'create' && typeof syncCreatePanel === 'function') syncCreatePanel();
   if (tab === 'settings' && typeof renderSettingsPanel === 'function') renderSettingsPanel();
   if (tab === 'jcur' && typeof renderJcurPanel === 'function') renderJcurPanel();   // ver31: 骨格はいまのステップの構造
-  else if (typeof _jcurBarRender === 'function') { _jcurBarRender(); _jcurCutUpdate(); }   // ver31: ほかのタブではバーと切り口を隠す（等値面は残す）
+  else if (typeof _jcurBarRender === 'function') { _jcurBarRender(); _jcurCutUpdate(); }   // ver31: ほかのタブではバーと切り口を隠す（等値面と矢印は _jcur3dFrame() が毎フレーム隠す）
   if (tab === 'nics' && typeof renderNicsPanel === 'function') renderNicsPanel();   // ver31: 同上
   _nicsPlaneUpdate();
   if (tab !== 'create') nicsPreviewUpdate(null);
@@ -21012,6 +21284,7 @@ const CITE_REFS = {
   staroverov03:{a:['Staroverov, V. N.','Scuseria, G. E.','Tao, J.','Perdew, J. P.'], t:'Comparative assessment of a new nonempirical density functional: Molecules and hydrogen-bonded complexes', j:'J. Chem. Phys.', v:'119', p:'12129--12137', y:2003, doi:'10.1063/1.1626543'},
   grimme06a:   {a:['Grimme, S.'], t:'Semiempirical hybrid density functional with perturbative second-order correlation', j:'J. Chem. Phys.', v:'124', p:'034108', y:2006, doi:'10.1063/1.2148954'},
   grimme06b:   {a:['Grimme, S.'], t:'Semiempirical GGA-type density functional constructed with a long-range dispersion correction', j:'J. Comput. Chem.', v:'27', p:'1787--1799', y:2006, doi:'10.1002/jcc.20495'},
+  peverati11:  {a:['Peverati, R.','Truhlar, D. G.'], t:'Improving the accuracy of hybrid meta-GGA density functionals by range separation', j:'J. Phys. Chem. Lett.', v:'2', p:'2810--2817', y:2011, doi:'10.1021/jz201170d'},   // ver31: M11（Crossref で照合）
   yu16:        {a:['Yu, H. S.','He, X.','Li, S. L.','Truhlar, D. G.'], t:'MN15: A Kohn--Sham global-hybrid exchange--correlation density functional with broad accuracy for multi-reference and single-reference systems and noncovalent interactions', j:'Chem. Sci.', v:'7', p:'5032--5051', y:2016, doi:'10.1039/C6SC00705H'},
   moller34:    {a:['M{\\o}ller, C.','Plesset, M. S.'], show:'Møller', t:'Note on an Approximation Treatment for Many-Electron Systems', j:'Phys. Rev.', v:'46', p:'618--622', y:1934, doi:'10.1103/PhysRev.46.618'},
   headgordon88:{a:['Head-Gordon, M.','Pople, J. A.','Frisch, M. J.'], t:'MP2 energy evaluation by direct methods', j:'Chem. Phys. Lett.', v:'153', p:'503--506', y:1988, doi:'10.1016/0009-2614(88)85250-3'},
@@ -21063,7 +21336,7 @@ const CITE_REFS = {
 const CITE_METHOD = {
   B3LYP: ['becke93','lyp88','vwn80','stephens94'], B3PW91: ['becke93','perdew92'], BLYP: ['becke88','lyp88'],
   PBEPBE: ['pbe96'], PBE1PBE: ['pbe96','adamo99'], PBE0: ['pbe96','adamo99'], CAMB3LYP: ['yanai04'],
-  M062X: ['zhao08'], M06: ['zhao08'], M06L: ['zhao06'], MN15: ['yu16'],
+  M062X: ['zhao08'], M06: ['zhao08'], M06L: ['zhao06'], M11: ['peverati11'], MN15: ['yu16'],
   WB97XD: ['chai08b'], WB97X: ['chai08a'], LCWPBE: ['vydrov06'],
   TPSSTPSS: ['tao03'], TPSS: ['tao03'], TPSSH: ['tao03','staroverov03'],
   B2PLYP: ['grimme06a'], B2PLYPD3: ['grimme06a','grimme10'], B97D: ['grimme06b'], B97D3: ['grimme06b','grimme10'],
@@ -21404,8 +21677,8 @@ function renderShortcutsBody(){
 //   - approx: true は、ファイルの更新日時などから後で推定して書いた日付
 const CHANGELOG_ENABLED = false;
 const CHANGELOG = [
-  { date:'2026-10-20', version:'ver31', ja:['再読み込み時に、添付していないファイルへ保存済みの ACID が戻る問題を防ぐため、ファイルごとの電流密度の添付状態を保存するようにしました。','NICS の 3D 表示設定を画像保存の横に追加。平面と軸の表示・色・不透明度を変更でき、軸の既定色は黒になりました。','環電流タブのアイコンの矢じりを整え、小さい表示でも先端が潰れて見えないようにしました。','2D NICS の 0 を白に固定し、負・正の色を個別に選べるようにしました（既定は青・赤）。','2D NICS のグラフ下の表示設定を、見出しの歯車から開く設定ウィンドウへ移しました。','環電流の閉じた流線を二重にたどる不具合と、周回の継ぎ目で軌跡が消える問題を修正しました。3D画像の保存に強さの凡例を含め、高解像度での先端・矢印の大きさと負荷時の再生速度を補正しました','環電流の2D・3Dに、先端が明るく尾が薄れていく「光の軌跡」を追加しました。動きの表示で矢印と切り替えられます','環電流の2D・3Dアニメーションを尾付きの短い矢印に変更し、青→黄→朱の配色で電流密度の強さを見分けやすくしました','3D環電流の粒子が平行投影でほぼ見えなかった問題を修正しました。2D・3Dとも粒子を電流密度の強さで色分けし、3Dに強さの凡例を追加しました','3Dの環電流に、電流方向へ粒子を流す再生・停止と速度調整を追加しました。等値面に重ねられ、GIMICはjvec.vtiだけでも使えます','pop=NO の自然軌道占有数を読み取り、主要な値に n_HONO・n_LUNO・T と山口式の y を表示するようにしました','環電流の2D流線に再生・停止と速度調整を追加しました。ACID・GIMICの電流方向を動く点で確認できます','新しいタブ「NICS」を追加しました。分子面に平行な格子に Bq を並べた NMR のログ（py.Aroma の 2D NICS など）を開くと、NICS（−σ）を 2D の地図に描きます。成分（iso / zz / xx / yy、zz は面の法線の向き）・配色・色の範囲（±自動 / 手入力）・等高線の間隔を選べ、図の上にポインタを置くとその点の値を読めます。図は PNG でコピー、全点の値は .csv で保存できます','ゴースト原子（Bq）を 3D の原子や電荷の表に出さないようにしました'],
-    en:['Aligned the ring-current tab icon arrowhead with its circular arc for clearer rendering at small sizes.','Fixed zero at white in 2D NICS and added separate negative and positive colour pickers (blue and red by default).','Moved the 2D NICS display controls into a settings dialog opened from the heading gear button.','Fixed duplicated closed streamlines and fading at loop seams; added the 3D current-density legend to image exports, corrected high-resolution head/arrow sizing and load-dependent playback timing.','Added light trails with bright heads and fading tails to 2D/3D ring-current animation, selectable alongside arrows.','Changed 2D and 3D current-flow animation to short moving arrows, with blue-to-yellow-to-vermilion colours for current-density magnitude.','Fixed subpixel 3D flow particles in orthographic views; added current-density colours to 2D/3D particles and a 3D magnitude legend.','Added 3D current-flow particles with play/stop and speed controls, usable over an isosurface or with GIMIC jvec.vti alone.','Key values now shows n_HONO, n_LUNO, T and y from the Yamaguchi equation for logs with pop=NO natural-orbital occupations','Added moving particles along 2D ring-current streamlines for ACID and GIMIC, with play/stop and speed controls.','Added an NICS tab. Open an NMR log with Bq ghost atoms on a grid parallel to the molecule (such as a py.Aroma 2D NICS run) to draw NICS (−σ) as a 2D map. Choose the component (iso / zz / xx / yy, with zz along the plane normal), colours, colour range (auto ± or manual) and contour interval, and hover over the plot to read the value at that point; copy the plot as a PNG or save every point as .csv','Ghost atoms (Bq) no longer appear as atoms in the 3D view or in the charge tables'] },
+  { date:'2026-10-20', version:'ver31', ja:['開いているログと同じ名前のファイルをもう一度開いても、一覧に増えずにそのファイルへ切り替わるようにしました。中身が変わっていれば（計算が進んだログなど）、視点や選択はそのまま新しい中身で読み直します','フォルダ・サーバーの一覧で、同じ名前のログがある .txt（ACID の出力）に「+ fchk」の印が付いていたのを直しました','ACID の .txt を一覧から開いたり単独でドロップしたりしたとき、選んでいたファイル（たとえば NICS のログ）に添えてしまう問題を直しました。同じ名前のログに添え、開いていなければ同じフォルダの同じ名前のログを先に開きます。合うログがなければ添えずに知らせます。jvec.vti は NMR の計算のログにだけ添えます','「環電流」タブの設定を、NICS と同じく見出しの「設定」と 3D 表示の左上の「設定」から開くウィンドウにまとめました。カードには面の高さと流れの再生、3D 表示の下端には等値面・isovalue・流れの再生だけを残しています','「環電流」タブの長さ（軸・面の高さ・間隔）を bohr から Å の表示にしました','「環電流」タブのスライダーに数値の欄を付け、値を打ち込めるようにしました。入/切はほかの設定と同じ ON / OFF の行にそろえました','「環電流」の 2D の図の矢印・流線の色を設定で変えられるようにしました。右の「log₁₀ (|J| / |J|max)」の文字が切れていたのも直しました','再読み込み時に、添付していないファイルへ保存済みの ACID が戻る問題を防ぐため、ファイルごとの電流密度の添付状態を保存するようにしました。','NICS の 3D 表示設定を画像保存の横に追加。平面と軸の表示・色・不透明度を変更でき、軸の既定色は黒になりました。','環電流タブのアイコンの矢じりを整え、小さい表示でも先端が潰れて見えないようにしました。','2D NICS の 0 を白に固定し、負・正の色を個別に選べるようにしました（既定は青・赤）。','2D NICS のグラフ下の表示設定を、見出しの歯車から開く設定ウィンドウへ移しました。','環電流の閉じた流線を二重にたどる不具合と、周回の継ぎ目で軌跡が消える問題を修正しました。3D画像の保存に強さの凡例を含め、高解像度での先端・矢印の大きさと負荷時の再生速度を補正しました','環電流の2D・3Dに、先端が明るく尾が薄れていく「光の軌跡」を追加しました。動きの表示で矢印と切り替えられます','環電流の2D・3Dアニメーションを尾付きの短い矢印に変更し、青→黄→朱の配色で電流密度の強さを見分けやすくしました','3D環電流の粒子が平行投影でほぼ見えなかった問題を修正しました。2D・3Dとも粒子を電流密度の強さで色分けし、3Dに強さの凡例を追加しました','3Dの環電流に、電流方向へ粒子を流す再生・停止と速度調整を追加しました。等値面に重ねられ、GIMICはjvec.vtiだけでも使えます','pop=NO の自然軌道占有数を読み取り、主要な値に n_HONO・n_LUNO・T と山口式の y を表示するようにしました','環電流の2D流線に再生・停止と速度調整を追加しました。ACID・GIMICの電流方向を動く点で確認できます','新しいタブ「NICS」を追加しました。分子面に平行な格子に Bq を並べた NMR のログ（py.Aroma の 2D NICS など）を開くと、NICS（−σ）を 2D の地図に描きます。成分（iso / zz / xx / yy、zz は面の法線の向き）・配色・色の範囲（±自動 / 手入力）・等高線の間隔を選べ、図の上にポインタを置くとその点の値を読めます。図は PNG でコピー、全点の値は .csv で保存できます','ゴースト原子（Bq）を 3D の原子や電荷の表に出さないようにしました'],
+    en:['Opening a file with the same name as an open log no longer adds a second entry: it switches to that file, and if the contents changed (such as a log whose calculation has progressed) it is reloaded with the view and selection kept','In the Folder and Server lists, a .txt (ACID output) that has a log with the same name no longer shows the “+ fchk” mark','Opening an ACID .txt from a file list, or dropping it on its own, no longer attaches it to whatever file is selected (such as an NICS log): it goes to the log with the same name, which is opened first from the same folder if needed, and nothing is attached when no log matches. jvec.vti is attached only to NMR logs','The Ring current settings now open in windows from the heading Settings button and the Settings button at the top left of the 3D view, as for NICS; the card keeps only the plane height and flow playback, and the bar under the 3D view only the isosurface, isovalue and flow playback','Ring current lengths (axes, plane height, spacing) are now shown in Å instead of bohr','Ring current sliders now have number fields so you can type a value, and on/off settings use the same ON / OFF rows as elsewhere','The colours of the 2D ring-current arrows and streamlines can be set; the clipped “log₁₀ (|J| / |J|max)” label on the right was fixed','Aligned the ring-current tab icon arrowhead with its circular arc for clearer rendering at small sizes.','Fixed zero at white in 2D NICS and added separate negative and positive colour pickers (blue and red by default).','Moved the 2D NICS display controls into a settings dialog opened from the heading gear button.','Fixed duplicated closed streamlines and fading at loop seams; added the 3D current-density legend to image exports, corrected high-resolution head/arrow sizing and load-dependent playback timing.','Added light trails with bright heads and fading tails to 2D/3D ring-current animation, selectable alongside arrows.','Changed 2D and 3D current-flow animation to short moving arrows, with blue-to-yellow-to-vermilion colours for current-density magnitude.','Fixed subpixel 3D flow particles in orthographic views; added current-density colours to 2D/3D particles and a 3D magnitude legend.','Added 3D current-flow particles with play/stop and speed controls, usable over an isosurface or with GIMIC jvec.vti alone.','Key values now shows n_HONO, n_LUNO, T and y from the Yamaguchi equation for logs with pop=NO natural-orbital occupations','Added moving particles along 2D ring-current streamlines for ACID and GIMIC, with play/stop and speed controls.','Added an NICS tab. Open an NMR log with Bq ghost atoms on a grid parallel to the molecule (such as a py.Aroma 2D NICS run) to draw NICS (−σ) as a 2D map. Choose the component (iso / zz / xx / yy, with zz along the plane normal), colours, colour range (auto ± or manual) and contour interval, and hover over the plot to read the value at that point; copy the plot as a PNG or save every point as .csv','Ghost atoms (Bq) no longer appear as atoms in the 3D view or in the charge tables'] },
   { date:'2026-10-19', version:'ver31', ja:['新しいタブ「環電流」を追加しました。GIMIC の電流密度（jvec.vti）をログと一緒に読み込むと、分子面に平行な面の電流を 2D の図に描きます。描き方は矢印・矢印（色）・流線・地図の4つから選べ、面の高さはスライダーで変えられます。図は PNG でコピーできます','「環電流」タブで Gaussian の ACID の出力（NMR=CSGT IOp(10/93=…) の .txt）も読めるようにしました。分子の面を当てはめ、その法線の向きの磁場で描きます。ファイル名の横に全電子か π 軌道（指定した軌道）かを出し、再読み込み後も戻ります','「環電流」タブから ACID の等値面と電流の矢印を 3D 表示に重ねられるようにしました。見た目は POV-Ray（AICD と同じ黄色の面・緑と赤の矢印・細い棒の分子）、半透明、強さの色の3つから選べ、isovalue と矢印の間隔を変えられます。GIMIC は acid.vti を一緒に読み込むと使えます','環電流の 3D の操作を 3D 表示の下端のバーへ移し、右のパネルは 2D の図だけにしました。2D の図で切っている面を 3D に半透明の板（切り口）で重ねられます'],
     en:['Added a Ring current tab. Load a GIMIC current density (jvec.vti) with the log to draw the current in a plane parallel to the molecule as a 2D plot. Choose arrows, coloured arrows, streamlines or a map, move the plane with the height slider, and copy the plot as a PNG','The Ring current tab also reads Gaussian ACID output (the .txt from NMR=CSGT IOp(10/93=…)): it fits the molecular plane and applies the field along its normal, shows whether the run covers all electrons or π (selected) orbitals next to the file name, and comes back after a reload','The Ring current tab can overlay the ACID isosurface and current arrows on the 3D view, in three looks — POV-Ray (the same yellow surface, green/red arrows and thin-stick molecule as AICD), translucent, or strength colour — with adjustable isovalue and arrow spacing; for GIMIC, load acid.vti as well','The ring-current 3D controls moved to a bar at the bottom of the 3D view, leaving the right panel to the 2D plot; the plane cut by the 2D plot can be shown in 3D as a translucent slice'] },
   { date:'2026-10-18', version:'ver31', ja:['Stable計算を「安定性計算」と表示し、計算条件に波動関数の安定／不安定／判定未取得を追加しました。stable=opt は最後の判定を表示し、ホバーで判定原文を確認できます。','X／Y／Zで正方向、Shift併用で負方向への視点切り替え、Rで既定の視点に戻すショートカットを追加しました。'], en:['Stable jobs are labeled Stability, with the final wavefunction verdict in Calculation conditions and the original verdict on hover.','Added X/Y/Z for positive-axis views, Shift for negative-axis views, and R to reset the view.'] },
@@ -22262,6 +22535,7 @@ function renderManual(){
       <li>.log / .out（必要なら同名の .fchk や .cube を一緒に）、.fchk 単独、.cube 単独、.mol / .sdf、.xyz、.gjf / .com に対応。</li>
       <li>同じ名前の .log と .fchk は、別々に開いても（どちらが先でも）1つにまとまります。ただし .fchk の原子の並び・電荷と多重度・手法と基底関数・構造がログと合うときだけで、合わなければ理由を出して別のファイルとして開きます。サーバーや「フォルダ」から開いたものは同じフォルダにあることも確かめます。</li>
       <li>ジョブが複数あるログ（--Link1--）では、.fchk と合うジョブを探し、そのジョブに切り替えて付けます。別のジョブを表示している間は、.fchk の軌道とスピン密度は使えません（そのジョブの計算ではないため）。</li>
+      <li>開いているログと<b>同じ名前のファイルをもう一度開く</b>と、一覧には増やさずにそのファイルへ切り替えます。中身が変わっていれば（計算が進んだログなど）、視点・選択・付けた .fchk などはそのままで新しい中身に読み直します。別のフォルダにある同じ名前のログは見分けられません。</li>
       <li>.fchk や .cube を付けたログには、左パネルのファイル一覧で「+ fchk」「+ cube」の印が付きます。マウスを乗せると付けたファイルの名前とジョブが出ます。印が灰色のときは、別のジョブを表示しているため .fchk を使えません。</li>
       <li>座標だけのファイル（.mol / .sdf・.xyz・.gjf / .com）は、構造を読み込んで「編集」タブに着地します。<b>.xyz は複数フレーム（軌跡）</b>も読み、「最適化」タブでコマ送り・再生できます。2行目のコメントにエネルギーが書かれていれば、グラフにも出ます。.gjf / .com はルート行から手法・基底関数を、電荷・多重度の行とあわせて読み取ります（<b>デカルト座標のみ</b>。Z-matrix には対応していません）。</li>
       <li><b>手元のフォルダ</b>の中身を一覧から開けます。左パネルの「フォルダ」で<b>フォルダを選択</b>をクリックすると、そのフォルダの中の .log / .out・.fchk・.mol / .xyz / .gjf が一覧に出ます（フォルダ名をクリックすると下の階層へ、上の「/」で区切られた道をクリックすると戻れます）。クリックしたファイルだけを読み込むので、フォルダが大きくても一覧はすぐ出ます。同じ名前の .fchk があるログには「+ fchk」が付き、一緒に読み込まれます。一覧は<b>名前順</b>と<b>更新が新しい順</b>を選べます。フォルダは<b>何個でも開いておけます</b>。見出しの右の ＋ で足すと、いちばん上の階層に開いているフォルダが並び、クリックすると中へ、<code>..</code> でその一覧へ戻ります。行の × で一覧から外せます（開いているファイルはそのままです）。同じ名前のフォルダをもう一度選んだときは増やさず、中身を取り直します。<b>フォルダはウィンドウにドロップしても同じ一覧になります</b>（こちらは「N 個のファイルをアップロードしますか？」の確認が出ません）。フォルダと単体のファイルを一緒に落とすと、ファイルはこれまでどおり開き、フォルダは一覧になります。フォルダは2つ以上まとめて落とせます。ブラウザはフォルダの場所を覚えられないので、ページを開き直すと選び直しになります。また、計算が進んで新しい .log が増えても自動では出ません（もう一度フォルダを選んでください）。フォルダを選ぶときにブラウザが「N 個のファイルをアップロードしますか？」と尋ねますが、中身はこのページの中だけで読まれ、どこにも送られません。</li>
@@ -22333,7 +22607,7 @@ cubegen 0 potential=scf x.fchk esp.cube  0 h</pre>
     <p>pop=NO の自然軌道占有数から HONO・LUNO を特定できる場合、主要な値に n_HONO・n_LUNO・T・y を表示します。T = (n_HONO − n_LUNO)/2、y = 1 − 2T/(1 + T²)（山口式）です。式は値のホバーでも確認できます。奇数電子系や不完全な出力では表示しません。</p>
     <h4>スピン</h4><p>開殻の計算（非制限計算や多重度 2 以上）か、.cube を読み込んだときだけ出るタブです。<b>「スピン密度」</b>をクリックすると、.fchk からスピン密度 ρα − ρβ を計算して等値面を描きます（α が余る所と β が余る所を2色で。.fchk が必要です）。cubegen などで作った <b>.cube</b> をログと一緒にドロップすると、そのファイル名のボタンが並び、クリックすると cube の等値面を描きます。.cube は1つのファイルに2枚まで添えられます（密度と静電ポテンシャル。2枚そろうと「電荷」タブで ESP マップを描けます）。.cube だけを開くこともできます。isovalue は対数目盛りで、表示・不透明度は「軌道」タブと共通です。解像度はスピン密度のほうが計算が重いため、軌道とは別に決まります。クリックしたボタンをもう一度クリックすると消えます。下の表は原子ごとのスピン密度で、棒の色は等値面の色と対応します。求め方は Mulliken のほかに、<code>pop=NBO</code> を付けた計算なら <b>NPA</b>（自然占有数）、<code>pop=Hirshfeld</code> を付けた計算なら <b>Hirshfeld</b> も選べます（読めた求め方が2つ以上あるときだけ、表の上にボタンが出ます）。「数値を3Dに表示」をオンにすると各原子に値の札が付き、表の左端のチェックで原子ごとに出し入れできます（見出しのチェックで全部）。札を出す原子はファイルごとに覚えます（⟨S²⟩ は左パネルの「主要な値」にあります）。</p>
     <h4>NICS</h4><p>分子面に平行な格子に Bq（ゴースト原子）を並べた NMR のログ（py.Aroma の 2D NICS など）を開くと出るタブです。各点の NICS（= −σ、負が芳香族的）を地図に塗り、分子の骨格を重ねます。<b>成分</b>は iso / zz / xx / yy で、zz は格子の面の法線の向き（分子が xy 面にないときは軸を x′ / y′ と書きます）。<b>配色</b>は 0 を白に固定し、負・正の色を設定ウィンドウで個別に選べます（既定は負が青、正が赤）。<b>範囲</b>は「±自動」（絶対値の大きいほうで対称にし、端を目盛りの切りのよい値に丸める。0 が白）か「手入力」。<b>等高線を表示</b>を入れると間隔（ppm）を選べ、0 ppm の線だけ太く引きます。<b>分子の骨格を重ねる</b>・<b>面の高さを図に書く</b>（既定は切）も入/切できます。図の上にポインタを置くと、その点の座標と NICS を図の下に出します。「コピー」で図を PNG に、「.csv」で全点の座標・NICS・ログの遮蔽テンソルを保存します。Bq は 3D の原子としては描きません。環の中心だけに Bq を置いた計算（格子にならないもの）ではこのタブは出ません。</p>
-    <h4>環電流</h4><p>閉じた流線は継ぎ目をまたいで連続再生します。3D画像の保存・コピーには電流密度の凡例と最大値が入ります。「動きの表示」（3D下端では「動き」）で「光の軌跡」と「矢印」を選べます。光の軌跡は明るい先端を追って尾が薄れる表示で、2D・3Dで別々に選択を保存します。再生中は尾付きの短い矢印が流れます。矢じりが方向、青→黄→朱の色が弱→強を示します。3Dの矢印は視点に合わせて画面上の向きが変わります。粒子の色は電流密度の強さを示します。2Dは面内成分の強さ（図の凡例）、3Dは全3成分の強さ（3D下端の凡例）です。色の範囲はそれぞれ全格子の最大値の10⁻⁴〜1倍で、最大値も入力データの単位で表示します。再生速度は表示用で、断面積分した電流量を表すものではありません。3D下端の「流れを再生」で、三次元の電流密度に沿って粒子を流せます。「流れを停止」と「速さ」（×0.25〜×3）で操作し、等値面と重ねて表示できます。GIMICの流れはjvec.vtiだけで使えます（等値面にはacid.vtiも必要）。動きは電流方向の可視化で、電子軌跡や実時間を表しません。<b>流れ → 再生</b>で、流線に沿って点が流れます（矢印表示からは流線へ自動で切り替わります）。「停止」で止め、「速さ」で×0.25〜×3に調整できます。速さの設定は保存されます。動きは電流の向きを示すもので、電子の軌跡や実際の時間を表しません。GIMIC の電流密度 <b>jvec.vti</b> を、ログ（や .fchk）と一緒にドロップするか、このタブの「jvec.vti を読み込む」で開くと出るタブです（NMR の計算のログなら、読み込む前から案内が出ます）。分子面に平行な面（z = 一定）で切った電流 (j<sub>x</sub>, j<sub>y</sub>) を 2D の図に描きます。<b>面の高さ</b>は格子の範囲で動かせ、既定は π の電流が強い 1 bohr です（格子の層の間は上下の層から内挿します）。<b>描き方</b>は「矢印」（墨一色・長さで強さ）、「矢印（色）」（長さ一定・色で強さ）、「流線」（色で強さ）、「地図」（強さの濃淡＋流線）の4つで、強さは 4 桁を対数で表します。<b>間隔</b>は矢印や流線の間隔、<b>分子の骨格</b>は 3D に出ている構造を重ねます。磁場は手前向き（+z）として描くので、<b>時計回りが反磁性（芳香族的）、反時計回りが常磁性（反芳香族的）</b>です。図の右上の「コピー」で PNG をクリップボードに写せます。jmod.vti・acid.vti（スカラー）は読みません。<br>Gaussian の <b>ACID</b>（<code>NMR=CSGT IOp(10/93=1)</code> か <code>=2</code>）が書く <b>.txt</b> も同じように読めます（ログと一緒にドロップするか、このタブのボタンで）。ACID は磁場の向きを選べるので、分子の平均平面を当てはめ、その法線の向きの磁場で描きます（分子が xy 面にないときは、軸は面内の x′ / y′ になります）。ばらばらな積分点を面の近くから集めて格子にならしているので、細かい模様は GIMIC より少しなめらかです。ファイル名の横には、ログから読んだ対象（全電子 / π 軌道 / 指定した軌道）が出ます。読み込みには数秒かかります。<br><b>3D 表示</b>：3D 表示の下端のバー（「環電流」タブで電流密度を読み込んでいるときだけ出ます）の「ACID の等値面」で、ACID（誘起電流密度の異方性）の等値面と、その上の電流の矢印（磁場は分子面の法線の向き）を 3D 表示に重ねます。見た目は「POV-Ray」（AICD と POV-Ray の図と同じ黄色の面・緑の軸と赤い先端の矢印で、分子も同じ細い棒に替わります。矢印は面の頂点から出し、長さは最大の電流を 1 bohr とした比）、「半透明」（淡い緑の面・墨の矢印）、「強さの色」（淡い灰の面・矢印の色で強さ）の3つです。isovalue は既定で 0.03（AICD と同じ）、GIMIC の acid.vti は値が小さいので 0.001 から始まります。GIMIC では jvec.vti と一緒に <b>acid.vti</b> を読み込むと使えます。バーの「切り口」で、2D の図で切っている面を 3D に半透明の板で重ねます（面の高さを動かすと一緒に動きます）。画像は 3D 表示の「画像の保存」で書き出せます。</p>
+    <h4>環電流</h4><p>カードには<b>面の高さ</b>（Å。スライダーの横の欄に数値でも入れられます）と<b>流れを再生</b>だけを置き、描き方・間隔・矢印の色・分子の骨格・動き・速さは見出しの「設定」のウィンドウにあります。3D 表示の下端のバーは「ACID の等値面」・isovalue（数値でも入力可）・「流れを再生」だけで、見た目・矢印と間隔・切り口・動き・速さは 3D 表示の左上の「設定」にあります。長さはすべて Å で表示します（GIMIC・ACID の数値は bohr なので換算しています）。<b>矢印の色</b>は、墨一色の描き方（矢印・地図）なら1色、色付きの描き方（矢印（色）・流線）なら弱・中・強の3色を選べます（流れの再生中は流れの色で描きます）。閉じた流線は継ぎ目をまたいで連続再生します。3D画像の保存・コピーには電流密度の凡例と最大値が入ります。「動きの表示」（3D下端では「動き」）で「光の軌跡」と「矢印」を選べます。光の軌跡は明るい先端を追って尾が薄れる表示で、2D・3Dで別々に選択を保存します。再生中は尾付きの短い矢印が流れます。矢じりが方向、青→黄→朱の色が弱→強を示します。3Dの矢印は視点に合わせて画面上の向きが変わります。粒子の色は電流密度の強さを示します。2Dは面内成分の強さ（図の凡例）、3Dは全3成分の強さ（3D下端の凡例）です。色の範囲はそれぞれ全格子の最大値の10⁻⁴〜1倍で、最大値も入力データの単位で表示します。再生速度は表示用で、断面積分した電流量を表すものではありません。3D下端の「流れを再生」で、三次元の電流密度に沿って粒子を流せます。「流れを停止」と「速さ」（×0.25〜×3）で操作し、等値面と重ねて表示できます。GIMICの流れはjvec.vtiだけで使えます（等値面にはacid.vtiも必要）。動きは電流方向の可視化で、電子軌跡や実時間を表しません。<b>流れを再生</b>を入れると、流線に沿って点が流れます（矢印表示からは流線へ自動で切り替わります）。切ると止まり、「設定」の「速さ」で×0.25〜×3に調整できます。速さの設定は保存されます。動きは電流の向きを示すもので、電子の軌跡や実際の時間を表しません。GIMIC の電流密度 <b>jvec.vti</b> を、ログ（や .fchk）と一緒にドロップするか、このタブの「jvec.vti を読み込む」で開くと出るタブです（NMR の計算のログなら、読み込む前から案内が出ます）。分子面に平行な面（z = 一定）で切った電流 (j<sub>x</sub>, j<sub>y</sub>) を 2D の図に描きます。<b>面の高さ</b>は格子の範囲で動かせ、既定は π の電流が強い 0.53 Å（1 bohr）です（格子の層の間は上下の層から内挿します）。<b>描き方</b>は「矢印」（墨一色・長さで強さ）、「矢印（色）」（長さ一定・色で強さ）、「流線」（色で強さ）、「地図」（強さの濃淡＋流線）の4つで、強さは 4 桁を対数で表します。<b>間隔</b>は矢印や流線の間隔、<b>分子の骨格を重ねる</b>は 3D に出ている構造を重ねます。磁場は手前向き（+z）として描くので、<b>時計回りが反磁性（芳香族的）、反時計回りが常磁性（反芳香族的）</b>です。図の右上の「コピー」で PNG をクリップボードに写せます。jmod.vti・acid.vti（スカラー）は読みません。<br>Gaussian の <b>ACID</b>（<code>NMR=CSGT IOp(10/93=1)</code> か <code>=2</code>）が書く <b>.txt</b> も同じように読めます（ログと一緒にドロップするか、このタブのボタンで）。ACID は磁場の向きを選べるので、分子の平均平面を当てはめ、その法線の向きの磁場で描きます（分子が xy 面にないときは、軸は面内の x′ / y′ になります）。ばらばらな積分点を面の近くから集めて格子にならしているので、細かい模様は GIMIC より少しなめらかです。ファイル名の横には、ログから読んだ対象（全電子 / π 軌道 / 指定した軌道）が出ます。読み込みには数秒かかります。<b>.txt だけを開いたとき</b>（フォルダ・サーバーの一覧から押す、それだけをドロップする、このタブのボタン）は、同じ名前のログ（<code>CPA_ACID.txt</code> なら <code>CPA_ACID.log</code>）に添えます。開いていなければ同じフォルダの同じ名前のログを先に開き、それも無ければ、選んでいるファイルが ACID の計算のときだけ添えます。どれでもなければ添えずに知らせます。jvec.vti は名前で組にできないので、選んでいるファイルが NMR の計算のログのときだけ添えます。<br><b>3D 表示</b>：3D 表示の下端のバー（「環電流」タブで電流密度を読み込んでいるときだけ出ます）の「ACID の等値面」で、ACID（誘起電流密度の異方性）の等値面と、その上の電流の矢印（磁場は分子面の法線の向き）を 3D 表示に重ねます。見た目は「POV-Ray」（AICD と POV-Ray の図と同じ黄色の面・緑の軸と赤い先端の矢印で、分子も同じ細い棒に替わります。矢印は面の頂点から出し、長さは最大の電流を 1 bohr とした比）、「半透明」（淡い緑の面・墨の矢印）、「強さの色」（淡い灰の面・矢印の色で強さ）の3つです。isovalue は既定で 0.03（AICD と同じ）、GIMIC の acid.vti は値が小さいので 0.001 から始まります。GIMIC では jvec.vti と一緒に <b>acid.vti</b> を読み込むと使えます。3D 表示の左上の「設定」の「2D の図の切り口を重ねる」で、2D の図で切っている面を 3D に半透明の板で重ねます（面の高さを動かすと一緒に動きます）。画像は 3D 表示の「画像の保存」で書き出せます。</p>
     <h4>スペクトル</h4>
     <ul>
       <li>TD-DFT の励起状態から吸収スペクトルを描きます。表の行をクリックすると、その状態の遷移が開き、グラフに位置が点線で出ます。</li>
@@ -22389,6 +22663,7 @@ cubegen 0 potential=scf x.fchk esp.cube  0 h</pre>
       <li>Supports .log / .out (optionally with a same-named .fchk and a .cube), .fchk alone, .cube alone, .mol / .sdf, .xyz and .gjf / .com.</li>
       <li>A .log and a .fchk with the same name are combined even when opened separately, in either order — but only when the .fchk’s atoms, charge and multiplicity, method and basis set, and structure match the log. Otherwise the .fchk opens as a separate file and the reason is shown. Files opened from a server or from the Folder section must also be in the same folder.</li>
       <li>For a log with several jobs (--Link1--), the viewer looks for the job the .fchk belongs to and switches to it. While another job is shown, the orbitals and spin density from the .fchk are unavailable, as they belong to a different calculation.</li>
+      <li>Opening a file <b>with the same name as an open log</b> switches to that file instead of adding another entry. If the contents changed (such as a log whose calculation has progressed), it is reloaded with the view, selection and attached .fchk kept. Logs with the same name in different folders cannot be told apart.</li>
       <li>A log with a .fchk or .cube attached shows “+ fchk” / “+ cube” in the file list on the left; hover it for the attached file’s name and job. A grey mark means another job is shown, so the .fchk cannot be used.</li>
       <li>Coordinate-only files (.mol / .sdf, .xyz, .gjf / .com) load their structure and land on the Edit tab. <b>Multi-frame .xyz trajectories</b> are read as well and can be stepped through or played on the Optimization tab; an energy written in the comment line is plotted. From a .gjf / .com the route line gives the method and basis set, together with the charge and multiplicity line (<b>Cartesian coordinates only</b>; Z-matrix input is not supported).</li>
       <li><b>A folder on your own machine</b> can be browsed as a list. Press <b>Select folder</b> under <b>Folder</b> in the left panel and the .log / .out, .fchk and .mol / .xyz / .gjf files inside it are listed (click a folder name to go deeper, or a segment of the path above to come back). Only the file you click is read, so even a large folder lists instantly. A log with a same-named .fchk is marked “+ fchk” and opens together with it, and the list can be sorted <b>by name</b> or <b>newest first</b>. You can keep <b>as many folders open as you like</b>: ＋ in the section heading adds one, the top level lists the folders you have opened, clicking one goes in and <code>..</code> comes back, and × on a row removes it (files you have open stay open). Choosing a folder of the same name again reloads it rather than adding it twice. <b>Dropping a folder onto the window lists it the same way</b>, and that route has no “Upload N files?” confirmation. Drop a folder together with loose files and the files open as usual while the folder is listed; and you can drop several folders at once. A browser cannot remember where the folder was, so you choose it again after reloading the page; new .log files written since you chose it do not appear on their own either (choose the folder again). The browser asks “Upload N files?” when you choose a folder — the contents are only read inside this page and are never sent anywhere.</li>
@@ -22459,7 +22734,7 @@ cubegen 0 potential=scf x.fchk esp.cube  0 h</pre>
     <p>When HONO/LUNO occupations can be identified from pop=NO output, Key values shows n_HONO, n_LUNO, T and y: T = (n_HONO − n_LUNO)/2 and y = 1 − 2T/(1 + T²) (Yamaguchi equation). Hover for the formulas. Odd-electron systems and incomplete output are omitted.</p>
     <h4>Spin</h4><p>This tab appears for open-shell calculations (unrestricted, or multiplicity 2 or more) and when a .cube is loaded. <b>Spin density</b> computes ρα − ρβ from the .fchk and draws its isosurface, with excess α and excess β in two colours (an .fchk is required). Drop a <b>.cube</b> (e.g. from cubegen) together with the log and a button with its file name appears; press it to draw the cube's isosurface. A file can carry two .cube files (a density and a potential - with both, the Charges tab draws an ESP map). A .cube can also be opened on its own. The isovalue slider is logarithmic; style and opacity are shared with the Orbitals tab. Resolution is set separately from the orbitals because spin density is heavier to compute. Press an active button again to hide the surface. The table lists the spin density of each atom, with bars in the isosurface colours. Besides Mulliken you can pick <b>NPA</b> (natural population) for logs run with <code>pop=NBO</code> and <b>Hirshfeld</b> for logs run with <code>pop=Hirshfeld</code>; the buttons above the table appear only when the log carries more than one of them. Turn on “values in 3D” to label each atom with its value; the checkboxes in the first column show or hide individual labels (the header checkbox toggles all). The choice is remembered per file (⟨S²⟩ is under Key values in the left panel).</p>
     <h4>NICS</h4><p>This tab appears for an NMR log with Bq ghost atoms on a grid parallel to the molecule (such as a py.Aroma 2D NICS run). It paints NICS (= −σ; negative is aromatic) at each point as a map with the molecular skeleton on top. <b>Component</b> is iso / zz / xx / yy, with zz along the normal of the grid plane (the axes read x′ / y′ when the molecule is not in the xy plane). <b>Colours</b> keep zero white, with separate negative and positive colour pickers in the settings dialog (blue and red by default); <b>Range</b> is Auto ± (symmetric about 0 and rounded out to the next tick, so 0 is white) or Manual. With <b>Show contours</b> on you can set the interval in ppm, and the 0 ppm line is drawn thicker. <b>Overlay the molecular skeleton</b> and <b>Write the plane height on the plot</b> (off by default) are switches too. Hover over the plot to read the coordinates and NICS at that point below it. <b>Copy</b> puts the plot on the clipboard as a PNG and <b>.csv</b> saves every point’s coordinates, NICS and the shielding tensor from the log. Bq atoms are not drawn in the 3D view. Runs with Bq only at ring centres (not a grid) do not show this tab.</p>
-    <h4>Ring current</h4><p>Closed streamlines play continuously across the seam. Saved/copied 3D images include the current-density legend and maximum value. Choose Light trails or Arrows under Animation. Trails have bright moving heads and fading tails. The 2D and 3D choices are saved separately. Playback uses short arrows with tails. Arrowheads show direction; blue → yellow → vermilion shows weak → strong current density. In 3D, arrowheads follow the projected field direction as the camera turns. Particle colour represents current-density magnitude: in-plane components in 2D and all three components in 3D. Legends span 10⁻⁴ to 1 times each global grid maximum; maximum values are shown in input units. Playback speed is illustrative and does not represent integrated current. Use “Play flow” in the bottom 3D bar to move particles along the full 3D current field. “Stop flow” and Speed (×0.25–×3) control playback. Flow can be overlaid on the isosurface; GIMIC flow needs only jvec.vti (the isosurface also needs acid.vti). Motion illustrates current direction, not electron trajectories or physical time. <b>Flow → Play</b> animates particles along streamlines (switching from arrows to Streamlines automatically). Stop ends playback; Speed (×0.25–×3) is remembered. Motion shows current direction, not electron trajectories or physical time. This tab appears when you drop a GIMIC current density <b>jvec.vti</b> together with a log (or .fchk), or open one with “Load jvec.vti” here (for NMR logs the tab and its prompt show up before loading). It draws the current (j<sub>x</sub>, j<sub>y</sub>) in a plane parallel to the molecule (constant z). Move the plane with <b>Height</b> within the grid; the default is 1 bohr, where π currents are strong (between grid layers the field is interpolated). <b>Style</b> offers Arrows (black, length = strength), Arrows (colour) (fixed length, colour = strength), Streamlines (colour = strength) and Map (strength shading plus streamlines); strength spans four decades on a log scale. <b>Spacing</b> sets the arrow / streamline spacing and <b>Molecular skeleton</b> overlays the structure shown in 3D. The field points toward the viewer (+z), so <b>clockwise is diatropic (aromatic) and anticlockwise paratropic (antiaromatic)</b>. “Copy” at the top right puts a PNG on the clipboard. jmod.vti and acid.vti (scalars) are not read.<br>The <b>.txt</b> written by Gaussian's <b>ACID</b> (<code>NMR=CSGT IOp(10/93=1)</code> or <code>=2</code>) is read the same way (drop it with the log, or use the button here). Because ACID allows any field direction, the mean molecular plane is fitted and the field is applied along its normal (if the molecule is not in the xy plane, the axes become the in-plane x′ / y′). The scattered integration points near the plane are smoothed onto a grid, so fine detail is slightly softer than with GIMIC. The target read from the log (all electrons / π orbitals / selected orbitals) is shown next to the file name. Loading takes a few seconds.<br><b>3D</b>: “ACID isosurface” in the bar at the bottom of the 3D view (shown on the Ring current tab when a current density is loaded) overlays the ACID (anisotropy of the induced current density) isosurface and the current arrows on it (field along the normal of the molecular plane) on the 3D view. Looks: <b>POV-Ray</b> (the same yellow surface and green-shaft / red-tip arrows as AICD + POV-Ray, with the molecule switched to the same thin sticks; arrows start at surface vertices and their length is relative to the largest current = 1 bohr), <b>Translucent</b> (pale green surface, black arrows) and <b>Strength colour</b> (pale grey surface, arrow colour = strength). The isovalue starts at 0.03 (as in AICD); GIMIC's acid.vti has smaller values and starts at 0.001. For GIMIC, load <b>acid.vti</b> together with jvec.vti. “Slice” shows the plane cut by the 2D plot as a translucent sheet in 3D (it follows the height slider). Save images with the 3D view's Save image.</p>
+    <h4>Ring current</h4><p>The card holds only <b>Height</b> (in Å; you can also type a value in the box next to the slider) and <b>Play flow</b>; style, spacing, arrow colour, molecular skeleton, animation and speed are in the window opened by the heading's Settings button. The bar under the 3D view holds only “ACID isosurface”, the isovalue (also typeable) and “Play flow”; look, arrows and spacing, the slice, animation and speed are under Settings at the top left of the 3D view. All lengths are shown in Å (GIMIC and ACID data are in bohr and are converted). <b>Arrow colour</b> is one colour for the single-colour styles (Arrows, Map) and weak / mid / strong colours for the coloured styles (Arrows (colour), Streamlines); while the flow plays, the flow colours are used. Closed streamlines play continuously across the seam. Saved/copied 3D images include the current-density legend and maximum value. Choose Light trails or Arrows under Animation. Trails have bright moving heads and fading tails. The 2D and 3D choices are saved separately. Playback uses short arrows with tails. Arrowheads show direction; blue → yellow → vermilion shows weak → strong current density. In 3D, arrowheads follow the projected field direction as the camera turns. Particle colour represents current-density magnitude: in-plane components in 2D and all three components in 3D. Legends span 10⁻⁴ to 1 times each global grid maximum; maximum values are shown in input units. Playback speed is illustrative and does not represent integrated current. Use “Play flow” in the bottom 3D bar to move particles along the full 3D current field. “Stop flow” and Speed (×0.25–×3) control playback. Flow can be overlaid on the isosurface; GIMIC flow needs only jvec.vti (the isosurface also needs acid.vti). Motion illustrates current direction, not electron trajectories or physical time. <b>Play flow</b> animates particles along streamlines (switching from arrows to Streamlines automatically). Switch it off to stop; Speed (×0.25–×3, in Settings) is remembered. Motion shows current direction, not electron trajectories or physical time. This tab appears when you drop a GIMIC current density <b>jvec.vti</b> together with a log (or .fchk), or open one with “Load jvec.vti” here (for NMR logs the tab and its prompt show up before loading). It draws the current (j<sub>x</sub>, j<sub>y</sub>) in a plane parallel to the molecule (constant z). Move the plane with <b>Height</b> within the grid; the default is 0.53 Å (1 bohr), where π currents are strong (between grid layers the field is interpolated). <b>Style</b> offers Arrows (black, length = strength), Arrows (colour) (fixed length, colour = strength), Streamlines (colour = strength) and Map (strength shading plus streamlines); strength spans four decades on a log scale. <b>Spacing</b> sets the arrow / streamline spacing and <b>Overlay the molecular skeleton</b> adds the structure shown in 3D. The field points toward the viewer (+z), so <b>clockwise is diatropic (aromatic) and anticlockwise paratropic (antiaromatic)</b>. “Copy” at the top right puts a PNG on the clipboard. jmod.vti and acid.vti (scalars) are not read.<br>The <b>.txt</b> written by Gaussian's <b>ACID</b> (<code>NMR=CSGT IOp(10/93=1)</code> or <code>=2</code>) is read the same way (drop it with the log, or use the button here). Because ACID allows any field direction, the mean molecular plane is fitted and the field is applied along its normal (if the molecule is not in the xy plane, the axes become the in-plane x′ / y′). The scattered integration points near the plane are smoothed onto a grid, so fine detail is slightly softer than with GIMIC. The target read from the log (all electrons / π orbitals / selected orbitals) is shown next to the file name. Loading takes a few seconds. <b>When you open a .txt on its own</b> (from the Folder or Server list, by dropping only that file, or with the button here), it is attached to the log with the same name (<code>CPA_ACID.txt</code> → <code>CPA_ACID.log</code>). If that log is not open, the same-name log in the same folder is opened first; failing that, it is attached only if the selected file is an ACID calculation. Otherwise nothing is attached and a message says so. jvec.vti cannot be matched by name, so it is attached only when the selected file is an NMR log.<br><b>3D</b>: “ACID isosurface” in the bar at the bottom of the 3D view (shown on the Ring current tab when a current density is loaded) overlays the ACID (anisotropy of the induced current density) isosurface and the current arrows on it (field along the normal of the molecular plane) on the 3D view. Looks: <b>POV-Ray</b> (the same yellow surface and green-shaft / red-tip arrows as AICD + POV-Ray, with the molecule switched to the same thin sticks; arrows start at surface vertices and their length is relative to the largest current = 1 bohr), <b>Translucent</b> (pale green surface, black arrows) and <b>Strength colour</b> (pale grey surface, arrow colour = strength). The isovalue starts at 0.03 (as in AICD); GIMIC's acid.vti has smaller values and starts at 0.001. For GIMIC, load <b>acid.vti</b> together with jvec.vti. “Show the 2D plot's plane” under the 3D view's Settings shows the plane cut by the 2D plot as a translucent sheet in 3D (it follows the height slider). Save images with the 3D view's Save image.</p>
     <h4>Spectrum</h4>
     <ul>
       <li>Plots the absorption spectrum from the TD-DFT excited states. Click a row to expand its transitions; the state is marked on the plot with a dashed line.</li>
