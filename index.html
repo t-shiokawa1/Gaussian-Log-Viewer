@@ -569,7 +569,7 @@ html.rq-dragging,html.rq-dragging *{cursor:grabbing!important}
 .tab-pane.active{display:flex}
 /* Settings use two columns when the panel itself has enough room. */
 #tab-body{container-type:inline-size}
-#pane-settings > .panel-card{min-width:0}
+#pane-settings > .panel-card{width:100%;min-width:0;max-width:380px}
 #interface-panel .hbtn{width:auto;padding:0 var(--btn-px)}
 #interface-panel .hbtn > span{display:inline}
 @container (min-width:760px){
@@ -613,9 +613,9 @@ html.rq-dragging,html.rq-dragging *{cursor:grabbing!important}
 .set-toggle{display:flex;align-items:center;gap:9px;width:100%;height:var(--btn-h);padding:0 10px;margin-bottom:var(--btn-gap);border:1px solid var(--border2);border-radius:var(--btn-r);background:var(--bg2);color:var(--text2);font:400 var(--btn-fs)/1 var(--font-sans);text-align:left;cursor:pointer}
 .set-toggle svg{width:var(--btn-ic);height:var(--btn-ic);flex:0 0 auto;opacity:.75}
 .set-toggle > span{flex:1;min-width:0}
-.set-toggle::after{content:"OFF";flex:0 0 auto;font-size:10px;font-weight:700;line-height:1.4;letter-spacing:.06em;color:var(--text3);border:1px solid var(--border2);border-radius:999px;padding:0 7px}
+.set-toggle::after{content:"OFF";flex:0 0 auto;font-size:10px;font-weight:700;line-height:1.4;letter-spacing:.06em;color:var(--text3);border:1px solid var(--border2);border-radius:var(--btn-r);padding:0;box-sizing:border-box;height:var(--inline-control-h);width:54px;display:grid;place-items:center}
 .set-toggle:hover{background:var(--bg3);color:var(--text)}
-/* ver14: ON は右端の丸枠だけで示す。以前は行の背景色・文字色・太字も同時に変わり、
+/* ver14: ON は右端のスイッチだけで示す。以前は行の背景色・文字色・太字も同時に変わり、
    同じ状態を4通りに言っていた（design/subtraction-audit-comparison.html の A1） */
 .set-toggle.active::after{content:"ON";color:var(--on-accent);background:var(--accent);border-color:var(--accent)}
 /* orbital list: single scrollbar (let the tab body scroll) */
@@ -1190,7 +1190,7 @@ button>.ui-icon+span,button>span+.ui-icon{min-width:0}
      ホバー : 地を一段濃く（--bg3）するだけ。緑は「選択中」と主要ボタンだけに使う
    ボタンの大きさ・余白・枠・色を style 属性で個別に上書きしないこと（幅や flex の指定は可）。
    土台は :where() で詳細度 0 にしてあり、役割クラスや部品クラスで上書きできる。 */
-:root{--btn-h:28px;--btn-px:10px;--btn-fs:12px;--btn-r:6px;--btn-gap:6px;--btn-ic:14px}
+:root{--btn-h:28px;--btn-px:10px;--btn-fs:12px;--btn-r:6px;--btn-gap:6px;--btn-ic:14px;--inline-control-h:calc(var(--btn-h) - 8px)}
 /* ver26: 角丸は3段だけ。部品（ボタン・入力欄・プルダウン・メニューの項目・ツールチップ）は --btn-r（6px）、
    カードの中の箱（一覧・表の枠・等幅の箱・メニュー・3D の上の重ね表示）は --r-box、カードは --r-card。
    それまでは 4・5・6・7・8・9・10px が混ざり、部品と箱の境目がはっきりしなかった。
@@ -1346,7 +1346,7 @@ html.anim-off .side-file.entering,html.anim-off .tab-pane.tab-fade{animation:non
 .axis-setting-row{display:flex;align-items:center;gap:9px;height:var(--btn-h);padding:0 6px 0 10px;margin-bottom:var(--btn-gap);border:1px solid var(--border2);border-radius:var(--btn-r);background:var(--bg2);color:var(--text2);font:400 var(--btn-fs)/1 var(--font-sans)}
 .axis-setting-row>svg{width:var(--btn-ic);height:var(--btn-ic);opacity:.75;flex:none}
 .axis-setting-row>span{flex:1;min-width:0}
-.axis-setting-row .axis-switch{display:flex;width:auto;height:auto;padding:0;margin:0;border:0;background:transparent;border-radius:999px;flex:none;gap:0}
+.axis-setting-row .axis-switch{display:flex;width:auto;height:auto;padding:0;margin:0;border:0;background:transparent;border-radius:var(--btn-r);flex:none;gap:0}
 .axis-setting-row .axis-switch:hover{background:transparent}
 .axis-gear{display:flex;align-items:center;justify-content:center;width:26px;height:26px;flex:none;padding:0;border:0;border-radius:var(--btn-r);background:transparent;color:var(--text3);cursor:pointer}
 .axis-gear:hover{background:var(--bg3);color:var(--text)}
@@ -1362,7 +1362,7 @@ html.anim-off .side-file.entering,html.anim-off .tab-pane.tab-fade{animation:non
 .set-toggle-row{display:flex;align-items:center;gap:9px;width:100%;height:var(--btn-h);padding:0 10px;margin-bottom:var(--btn-gap);border:1px solid var(--border2);border-radius:var(--btn-r);background:var(--bg2);color:var(--text2);font:400 var(--btn-fs)/1 var(--font-sans);text-align:left;cursor:default}
 .set-toggle-row>svg{width:var(--btn-ic);height:var(--btn-ic);flex:none;opacity:.75}
 .set-toggle-row>span{flex:1;min-width:0}
-.set-toggle-row .set-toggle{flex:none;width:auto;height:auto;padding:0;margin:0;border:0;border-radius:999px;background:transparent;gap:0}
+.set-toggle-row .set-toggle{flex:none;width:auto;height:auto;padding:0;margin:0;border:0;border-radius:var(--btn-r);background:transparent;gap:0}
 .set-toggle-row .set-toggle:hover{background:transparent}
 .set-toggle-row .set-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .set-toggle-row:has(>.set-toggle[style*="display:none"]),.set-toggle-row:has(>.set-toggle[style*="display: none"]){display:none}
@@ -1370,12 +1370,28 @@ html.anim-off .side-file.entering,html.anim-off .tab-pane.tab-fade{animation:non
 .set-toggle-row{padding-right:6px}
 .set-toggle-row>button[aria-haspopup="dialog"],.axis-setting-row>button[aria-haspopup="dialog"]{order:1}
 /* 行内の設定ボタンは外枠との間に上下の余白を確保する。 */
-.set-toggle-row>button.small-btn[aria-haspopup="dialog"]{flex:0 0 auto;height:calc(var(--btn-h) - 8px);min-height:0;padding:0 6px;border-radius:3px;font-size:11px}
+:is(.set-toggle-row,.axis-setting-row)>button.small-btn[aria-haspopup="dialog"],#color-settings-btn{flex:0 0 auto;height:var(--inline-control-h);min-height:0;padding:0 6px;border-radius:var(--btn-r);font-size:11px}
 .set-toggle-row>.set-toggle,.axis-setting-row>.axis-switch{order:2}
-.set-toggle-row .set-toggle::after,.axis-setting-row .axis-switch::after{width:38px;text-align:center}
 .set-toggle-row .set-toggle:hover::after,.axis-setting-row .axis-switch:hover::after{background:var(--bg3);border-color:var(--text3)}
 .set-toggle-row .set-toggle.active:hover::after,.axis-setting-row .axis-switch.active:hover::after{background:var(--accent2);border-color:var(--accent2)}
-/* Display switches retain native checked/disabled state, sharing the ON/OFF pill. */
+:is(.set-toggle-row,.axis-setting-row):has(>button.small-btn[aria-haspopup="dialog"]){gap:var(--btn-gap)}
+/* ver31: 右パネルの幅に合わせ、ラベルを保ったまま列数を変える。 */
+#viewstyle-card .style-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+#viewstyle-card .style-grid .seg-btn{height:auto;min-height:calc(var(--btn-h) - 2px);white-space:normal;line-height:1.2}
+#viewstyle-card .style-grid .seg-btn:nth-child(3n + 1){border-left:0}
+#viewstyle-card .set-toggle-row{height:auto;min-height:var(--btn-h);padding-block:3px;line-height:1.25}
+#viewstyle-card .set-toggle-row>span{overflow-wrap:anywhere}
+/* ver31: グラフの設定値はラベル・スライダー・値を同じ列に並べる。 */
+.setting-slider{display:grid;grid-template-columns:8em minmax(0,1fr) 4em;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.setting-slider input[type="range"]{width:100%;min-width:0;margin-inline:0}
+.setting-slider>span:last-child{text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text3)}
+@container (max-width:351px){
+  #viewstyle-card .style-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #viewstyle-card .style-grid .seg-btn{border:0}
+  #viewstyle-card .style-grid .seg-btn:nth-child(even){border-left:1px solid var(--border2)}
+  #viewstyle-card .style-grid .seg-btn:nth-child(n + 3){border-top:1px solid var(--border2)}
+}
+/* Display switches retain native checked/disabled state, sharing the ON/OFF indicator. */
 label.display-switch{position:relative;cursor:pointer;height:auto;min-height:var(--btn-h);box-sizing:border-box}
 label.display-switch>span:not(.set-toggle){padding:6px 0;line-height:1.4}
 label.display-switch>input{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:54px;height:24px;margin:0;opacity:0;z-index:1;cursor:pointer}
@@ -1392,6 +1408,8 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
 .atom-label-field input[type=range]{flex:1;min-width:0}
 .color-section-head{display:flex;align-items:center;justify-content:space-between;margin-top:16px;margin-bottom:8px}
 .color-section-head .set-sec{margin:0}
+.color-summary-row{display:flex;align-items:center;gap:var(--btn-gap)}
+.color-summary-row .color-summary{flex:1;min-width:0}
 .color-summary{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:11px;color:var(--text2)}
 .color-summary-item{display:inline-flex;align-items:center;gap:6px}
 .color-summary-item i{width:18px;height:18px;border:1px solid var(--border2);border-radius:4px}
@@ -1452,6 +1470,7 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
   <symbol id="ui-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 3.2V8h-4.8"/></symbol>
   <symbol id="ui-orbit" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9.5" ry="4" transform="rotate(30 12 12)"/><ellipse cx="12" cy="12" rx="9.5" ry="4" transform="rotate(-30 12 12)"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></symbol>
   <symbol id="ui-alert" viewBox="0 0 24 24"><path d="M12 4 3 20h18zM12 9v5M12 17h.01"/></symbol>
+  <symbol id="ui-wireframe" viewBox="0 0 16 16"><path d="M8 1.5 14 5v6l-6 3.5L2 11V5zm0 7L2 5m6 3.5L14 5m-6 3.5v6" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></symbol>
   <symbol id="ui-settings" viewBox="0 0 24 24"><path d="m9 3-.6 2.4-2 .9-2.2-.7-2 3.4 1.7 1.7v2.6l-1.7 1.7 2 3.4 2.3-.7 2 .9L9 21h4l.6-2.4 2-.9 2.3.7 2-3.4-1.7-1.7v-2.6l1.7-1.7-2-3.4-2.3.7-2-.9L13 3z"/><circle cx="11" cy="12" r="3"/></symbol>
   <symbol id="ui-download" viewBox="0 0 24 24"><path d="M12 4v10M8.5 10.5 12 14l3.5-3.5M5 19h14"/></symbol>
   <!-- ver15: スペクトルの「スタイル」ボタン -->
@@ -1629,6 +1648,12 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
         <div class="fold-wrap"><div class="side-body"><div id="side-cite"></div>
           <button class="small-btn ui-secondary" onclick="copyCiteBib('side')" style="width:100%"><svg class="ui-icon"><use href="#ui-clipboard"/></svg><span id="side-cite-copy-label">BibTeX をコピー</span></button>
         </div></div>
+      </div>
+      <div class="side-sec folded" id="side-input-sec" style="display:none">
+        <div class="side-head">
+          <button type="button" class="fold-btn" aria-expanded="false" aria-controls="side-input" onclick="toggleSideSec(this)"><svg class="ui-icon fold-chev" aria-hidden="true"><use href="#ui-chevron-down"/></svg><span class="fold-label" id="side-input-label">入力設定</span></button>
+        </div>
+        <div class="fold-wrap"><div class="side-body"><pre class="code-box jq-raw" id="side-input"></pre></div></div>
       </div>
       <div class="side-sec" id="side-env-sec">
         <div class="side-head">
@@ -1882,6 +1907,7 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
           <label class="set-toggle-row"><span id="opt-line-color-label">曲線・データ点</span><input type="color" class="ui-color" id="opt-line-color" oninput="setOptPlotColor('line',this.value)"></label>
           <label class="set-toggle-row"><span id="opt-dot-color-label">選択中の点</span><input type="color" class="ui-color" id="opt-dot-color" oninput="setOptPlotColor('dot',this.value)"></label>
         </div>
+        <div class="panel-card small-muted" id="opt-history-empty" style="display:none">最適化履歴がまだ2点に達していません。</div>
         <!-- OPTIMIZATION TRAJECTORY ANIMATION -->
         <div class="panel-card" id="opt-anim-card" style="display:none">
           <div class="panel-title has-actions"><span id="poptanim-title">構造最適化の経過</span><span class="title-actions"><button class="small-btn ui-secondary plot-copy-btn" id="copy-opt-btn" onclick="copyPlotImage('opt-history-svg')"><svg class="ui-icon"><use href="#ui-clipboard"/></svg><span>コピー</span></button></span></div>
@@ -2250,16 +2276,21 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
           <div class="panel-title"><span id="pviewstyle-title">表示スタイル</span></div>
 
           <!-- ver31: 1つの枠に2段。上の段は陰影のある3つ、下の段は構造式・フラット・ワイヤーフレーム（design/flat-display-styles-comparison.html の案U2） -->
-          <div class="set-seg two-row" role="group" aria-label="表示スタイル">
+          <div class="set-seg two-row style-grid" role="group" aria-label="表示スタイル">
             <button class="seg-btn" id="style-bs-btn" onclick="setDisplayStyle('ball-stick')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6.2 9.8 9.8 6.2"/><circle cx="4.3" cy="11.7" r="2.4"/><circle cx="11.7" cy="4.3" r="2.4"/></svg><span id="set-bs-lbl">Ball &amp; Stick</span></button>
             <button class="seg-btn" id="style-sp-btn" onclick="setDisplayStyle('spacefill')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.8" cy="9.3" r="4.3"/><circle cx="10.2" cy="6.7" r="4.3"/></svg><span id="set-sp-lbl">Spacefill</span></button>
             <button class="seg-btn active" id="style-st-btn" onclick="setDisplayStyle('stick')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 11.5 6 6.2l4 4.3L13.8 5"/></svg><span id="set-st-lbl">Stick</span></button>
-            <button class="seg-btn row2 row2-first" id="style-fm-btn" onclick="setDisplayStyle('formula')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M8 2 13.2 5v6L8 14 2.8 11V5z"/><path d="M4.6 6.1 8 4.1M11.4 6.1v3.8M8 11.9l-3.4-2"/></svg><span id="set-fm-lbl">構造式</span></button>
-            <button class="seg-btn row2" id="style-fl-btn" onclick="setDisplayStyle('flat')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5.6 10.4 10.4 5.6"/><circle cx="4" cy="12" r="2.2" fill="currentColor" fill-opacity=".35"/><circle cx="12" cy="4" r="2.2" fill="currentColor" fill-opacity=".35"/></svg><span id="set-fl-lbl">フラット</span></button>
-            <button class="seg-btn row2" id="style-wire-btn" onclick="setDisplayStyle('wire')"><span id="set-wire-lbl">ワイヤーフレーム</span></button>
+            <button class="seg-btn row2 row2-first" id="style-fm-btn" onclick="setDisplayStyle('formula')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M8 2 13.2 5v6L8 14 2.8 11V5z"/><path d="M4.6 6.1 8 4.1M11.4 6.1v3.8M8 11.9l-3.4-2"/></svg><span id="set-fm-lbl">Formula</span></button>
+            <button class="seg-btn row2" id="style-fl-btn" onclick="setDisplayStyle('flat')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5.6 10.4 10.4 5.6"/><circle cx="4" cy="12" r="2.2" fill="currentColor" fill-opacity=".35"/><circle cx="12" cy="4" r="2.2" fill="currentColor" fill-opacity=".35"/></svg><span id="set-fl-lbl">Flat</span></button>
+            <button class="seg-btn row2" id="style-wire-btn" onclick="setDisplayStyle('wire')"><svg class="ui-icon" aria-hidden="true"><use href="#ui-wireframe"/></svg><span id="set-wire-lbl">Wireframe</span></button>
           </div>
           <!-- ver31: 構造式のときだけ出す -->
           <div class="set-toggle-row"><span id="set-fm-color-lbl">元素記号に色</span><button class="set-toggle" id="fm-color-btn" onclick="toggleFormulaColor()" style="display:none" type="button" aria-labelledby="set-fm-color-lbl"></button></div>
+          <div class="set-toggle-row"><span id="fm-hydrogen-lbl">水素原子を表示</span><button class="set-toggle" id="fm-hydrogen-btn" onclick="toggleFormulaHydrogen()" style="display:none" type="button" aria-labelledby="fm-hydrogen-lbl" aria-pressed="false"></button></div>
+          <div id="fm-depth-row">
+            <div class="set-toggle-row"><span id="fm-depth-tone-lbl">奥行きの濃淡</span><button class="set-toggle" id="fm-depth-tone-btn" onclick="toggleFormulaDepth('tone')" type="button" aria-labelledby="fm-depth-tone-lbl" aria-pressed="false"></button></div>
+            <div class="set-toggle-row"><span id="fm-depth-width-lbl">奥行きの線幅</span><button class="set-toggle" id="fm-depth-width-btn" style="display:none" onclick="toggleFormulaDepth('width')" type="button" aria-labelledby="fm-depth-width-lbl" aria-pressed="false"></button></div>
+          </div>
 <div class="set-sec" id="bo-section-title">結合次数の表示</div><div class="set-toggle-row"><span id="bo-enable-lbl">多重結合を区別する</span><button type="button" class="set-toggle" id="bo-enable" aria-labelledby="bo-enable-lbl" aria-pressed="false" onclick="setBondOrders(this.getAttribute('aria-pressed')!=='true')"></button><button type="button" class="small-btn ui-secondary" id="bo-settings-btn" aria-label="結合次数の設定" title="結合次数の設定" aria-haspopup="dialog" onclick="toggleBondOrderPanel()"><svg class="ui-icon" aria-hidden="true"><use href="#ui-settings"/></svg><span class="settings-button-label">設定</span></button></div>          <!-- ver31: 内側の線の側を結合ごとに入れ替える（design/aromatic-line-side-comparison.html の案2） -->
           <div class="set-toggle-row" id="bo-side-row" style="display:none"><span id="bo-side-lbl">結合を選んで線の側を切り替える</span><button class="set-toggle" id="bo-side-btn" onclick="set3DPickMode('bondside')" type="button" aria-labelledby="bo-side-lbl"></button></div>
           <div class="set-sec" id="set-overlay-lbl">重ねて表示</div>
@@ -2276,7 +2307,24 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
           <div id="view-menu-grid" class="set-seg" role="group" aria-labelledby="pview-title"></div>
           <button class="small-btn ui-secondary" id="reset-btn" onclick="resetCamera()" style="width:100%;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 5.6V3.4c0-.66.54-1.2 1.2-1.2h2.2"/><path d="M10.4 2.2h2.2c.66 0 1.2.54 1.2 1.2v2.2"/><path d="M13.8 10.4v2.2c0 .66-.54 1.2-1.2 1.2h-2.2"/><path d="M5.6 13.8H3.4c-.66 0-1.2-.54-1.2-1.2v-2.2"/><circle cx="8" cy="8" r="1.6"/></svg><span id="set-reset-lbl">視点を既定に戻す</span></button>
                     </div>
-          <div id="color-panel"><div class="color-section-head"><div class="set-sec" id="pcolor-title">色設定</div><button type="button" class="small-btn ui-secondary" id="color-settings-btn" aria-label="色設定" title="色設定" aria-haspopup="dialog" onclick="toggleColorPanel()"><svg class="ui-icon" aria-hidden="true"><use href="#ui-settings"/></svg><span class="settings-button-label">設定</span></button></div><div id="color-summary" class="color-summary"></div></div>
+          <div id="color-panel"><div class="color-section-head"><div class="set-sec" id="pcolor-title">色設定</div></div><div class="color-summary-row"><div id="color-summary" class="color-summary"></div><button type="button" class="small-btn ui-secondary" id="color-settings-btn" aria-label="色設定" title="色設定" aria-haspopup="dialog" onclick="toggleColorPanel()"><svg class="ui-icon" aria-hidden="true"><use href="#ui-settings"/></svg><span class="settings-button-label">設定</span></button></div></div>
+
+        </div>
+
+        <!-- ver23: アニメーション（動きをつけて切り替える）。視点・一覧の増減・節の開閉・タブの
+             切り替えにまとめて効く。起動時と同じくアプリ全体のふるまいの設定なので隣に置く。
+             比較は design/animation-comparison.html -->
+        <div class="panel-card" id="motion-panel">
+          <div class="panel-title"><span id="pmotion-title">操作</span></div>
+
+          <div class="set-toggle-row"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"> <path d="M8 2a6 6 0 1 1-4.2 10.2"/> <polyline points="1.2,9.5 3.8,12.4 6.8,10.6"/> </svg><span id="set-inertia-lbl">回転の慣性</span><button class="set-toggle" id="inertia-btn" onclick="toggleInertia()" type="button" aria-labelledby="set-inertia-lbl"></button></div>
+          <div class="set-toggle-row"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 8a5.8 5.8 0 0 1 9.9-4.1"/><path d="M13.8 8a5.8 5.8 0 0 1-9.9 4.1"/><path d="M12.4 1.4v2.6h-2.6"/><path d="M3.6 14.6V12h2.6"/></svg><span id="set-motion-lbl">動きをつけて切り替える</span><button class="set-toggle" id="motion-btn" onclick="toggleMotion()" type="button" aria-labelledby="set-motion-lbl"></button><button type="button" class="small-btn ui-secondary" id="motion-settings-btn" aria-label="動きの速さの設定" title="動きの速さの設定" aria-haspopup="dialog" onclick="document.getElementById('motion-settings-dialog').showModal()"><svg class="ui-icon" aria-hidden="true"><use href="#ui-settings"/></svg><span class="settings-button-label">設定</span></button></div>
+          <!-- ver26: ホイールの効き。軸の表示設定と同じ行の作り（range-sub + 右に値） -->
+          <div class="setting-slider">
+            <span id="set-zoom-lbl">ズームの速さ</span>
+            <input type="range" class="range-sub" id="zoom-speed" min="0.2" max="3" step="0.1" value="1" oninput="setZoomSpeed(this.value)">
+            <span id="zoom-speed-val">×1.0</span>
+          </div>
 
         </div>
 
@@ -2292,18 +2340,18 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
             <button class="seg-btn" id="ptick-in" data-ptick-dir="in" onclick="setPlotTickDir('in')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1.5 10h13"/><path d="M4 10V6.8M8 10V6.8M12 10V6.8"/></svg><span id="ptick-in-lbl">内向き</span></button>
             <button class="seg-btn" id="ptick-none" data-ptick-dir="none" onclick="setPlotTickDir('none')"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1.5 8h13"/></svg><span id="ptick-none-lbl">なし</span></button>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--text2)">
+          <div class="setting-slider" style="margin-top:10px">
             <span id="ptick-minor-lbl" style="flex:0 0 auto">補助目盛</span>
             <input type="range" id="ptick-minor" class="range-sub js-ptick-minor" min="1" max="10" step="1" value="1" oninput="setPlotTickMinor(this.value)" style="flex:1">
             <span id="ptick-minor-val" class="js-ptick-minor-val" style="flex:0 0 52px;text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text3)">なし</span>
           </div>
           <div class="set-sec" id="pfont-sec-lbl">文字と余白</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)">
+          <div class="setting-slider">
             <span id="pfont-size-lbl" style="flex:0 0 auto">文字の大きさ</span>
             <input type="range" id="pfont-size" class="range-sub js-pfont-size" min="6" max="18" step="0.5" value="12" oninput="setPlotFontSize(this.value)" style="flex:1">
             <span id="pfont-size-val" class="js-pfont-size-val" style="flex:0 0 52px;text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text3)">12 px</span>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--text2)">
+          <div class="setting-slider" style="margin-top:8px">
             <span id="pfont-pad-lbl" style="flex:0 0 auto">余白</span>
             <input type="range" id="pfont-pad" class="range-sub js-pfont-pad" min="0.6" max="2" step="0.05" value="0.95" oninput="setPlotPadScale(this.value)" style="flex:1">
             <span id="pfont-pad-val" class="js-pfont-pad-val" style="flex:0 0 52px;text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text3)">95 %</span>
@@ -2315,28 +2363,6 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
               </svg>
               <span id="pplot-reset-lbl">既定に戻す</span>
             </button>
-          </div>
-
-        </div>
-
-        <!-- ver23: アニメーション（動きをつけて切り替える）。視点・一覧の増減・節の開閉・タブの
-             切り替えにまとめて効く。起動時と同じくアプリ全体のふるまいの設定なので隣に置く。
-             比較は design/animation-comparison.html -->
-        <div class="panel-card" id="motion-panel">
-          <div class="panel-title"><span id="pmotion-title">操作</span></div>
-
-          <div class="set-toggle-row"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"> <path d="M8 2a6 6 0 1 1-4.2 10.2"/> <polyline points="1.2,9.5 3.8,12.4 6.8,10.6"/> </svg><span id="set-inertia-lbl">回転の慣性</span><button class="set-toggle" id="inertia-btn" onclick="toggleInertia()" type="button" aria-labelledby="set-inertia-lbl"></button></div>
-          <!-- ver26: ホイールの効き。軸の表示設定と同じ行の作り（range-sub + 右に値） -->
-          <div style="display:flex;align-items:center;gap:8px;margin:2px 0 4px;font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums">
-            <span id="set-zoom-lbl" style="width:72px">ズームの速さ</span>
-            <input type="range" class="range-sub" id="zoom-speed" min="0.2" max="3" step="0.1" value="1" oninput="setZoomSpeed(this.value)" style="flex:1">
-            <span id="zoom-speed-val" style="width:34px;text-align:right">×1.0</span>
-          </div>
-          <div class="set-toggle-row"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.2 8a5.8 5.8 0 0 1 9.9-4.1"/><path d="M13.8 8a5.8 5.8 0 0 1-9.9 4.1"/><path d="M12.4 1.4v2.6h-2.6"/><path d="M3.6 14.6V12h2.6"/></svg><span id="set-motion-lbl">動きをつけて切り替える</span><button class="set-toggle" id="motion-btn" onclick="toggleMotion()" type="button" aria-labelledby="set-motion-lbl"></button></div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;color:var(--text2)">
-            <span id="motion-speed-lbl" style="flex:0 0 auto">動きの速さ</span>
-            <input type="range" id="motion-speed" class="range-sub" min="0.5" max="2" step="0.1" value="1" oninput="setMotionSpeed(this.value)" style="flex:1">
-            <span id="motion-speed-val" style="flex:0 0 52px;text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text3)">×1.0</span>
           </div>
 
         </div>
@@ -2763,6 +2789,15 @@ label.display-switch:has(>input:checked:not(:disabled)):hover>.set-toggle::after
               </div>
             </div>
 </dialog>
+<dialog class="axis-settings-dialog" id="motion-settings-dialog" aria-labelledby="motion-dialog-title">
+  <div class="axis-dialog-head"><h2 id="motion-dialog-title">動きの速さ</h2><button type="button" class="small-btn ui-secondary" id="motion-dialog-close" onclick="this.closest('dialog').close()">閉じる</button></div>
+          <div class="setting-slider">
+            <span id="motion-speed-lbl">動きの速さ</span>
+            <input type="range" id="motion-speed" class="range-sub" min="0.5" max="2" step="0.1" value="1" oninput="setMotionSpeed(this.value)">
+            <span id="motion-speed-val">×1.0</span>
+          </div>
+
+</dialog>
 <dialog class="axis-settings-dialog" id="axis-settings-dialog" aria-labelledby="axis-dialog-title">
   <div class="axis-dialog-head"><h2 id="axis-dialog-title">座標軸の設定</h2><button type="button" class="small-btn ui-secondary" id="axis-dialog-close" onclick="document.getElementById('axis-settings-dialog').close()">閉じる</button></div>
   <div id="axis-opts"></div>
@@ -3019,6 +3054,8 @@ function applyLang(){
   _setTxt('side-cond-label','計算条件','Conditions');
   _setTxt('side-cite-label','文献','References');   // ver31
   _setTxt('side-cite-copy-label','BibTeX をコピー','Copy BibTeX');
+  _setTxt('opt-history-empty','最適化履歴がまだ2点に達していません。','Fewer than two optimization steps are available.');
+  _setTxt('side-input-label','入力設定','Input settings');
   _setTxt('side-env-label','計算環境','Environment');
   _setTxt('side-key-label','主要な値','Key values');
   _setTxt('side-thermo-label','熱化学（freq）','Thermochemistry (freq)');
@@ -3087,11 +3124,11 @@ function applyLang(){
   _setTxt('set-bondlen-lbl','結合長（Å）','Bond lengths (Å)');   // ver31
   _setTxt('pbllabel-title','図への書き込み','Annotate the view');   // ver31: 上の「測定」は測る、ここは図に書く（design/bond-length-labels-wording-comparison.html の案3-A）
   _setTxt('set-halo-lbl','文字のふち（結合長）','Text halo (bond lengths)');   // ver31
-  _setTxt('set-fm-lbl','構造式','Formula');
-  _setTxt('set-fl-lbl','フラット','Flat');
-  _setTxt('set-wire-lbl','ワイヤーフレーム','Wireframe');
   syncWireStyle();
   _setTxt('set-fm-color-lbl','元素記号に色','Colour element symbols');
+  _setTxt('fm-hydrogen-lbl','水素原子を表示','Show hydrogen atoms');
+  _setTxt('fm-depth-tone-lbl','奥行きの濃淡','Depth shading');
+  _setTxt('fm-depth-width-lbl','奥行きの線幅','Depth line width');
   _setTxt('bo-side-lbl','結合を選んで線の側を切り替える','Click a bond to switch its line side');
   if (typeof syncBondSideInfo === 'function') syncBondSideInfo();
   _setTxt('set-proj-lbl','正投影','Orthographic');
@@ -3160,6 +3197,11 @@ function applyLang(){
   _setTxt('pmotion-title','操作','Controls');
   _setTxt('set-motion-lbl','動きをつけて切り替える','Animate transitions');
   _setTxt('motion-speed-lbl','動きの速さ','Speed');
+  _setTxt('motion-dialog-title','動きの速さ','Transition speed');
+  _setTxt('motion-dialog-close','閉じる','Close');
+  const motionSettings = document.getElementById('motion-settings-btn');
+  motionSettings.title = lang === 'en' ? 'Transition speed settings' : '動きの速さの設定';
+  motionSettings.setAttribute('aria-label', motionSettings.title);
   // ver29: 「再生」（スキャン・最適化・実行状況のコマ送りの速さ）
   _setTxt('pplayspeed-title','再生','Playback');
   _setTxt('playspeed-lbl','1 コマの長さ','Frame');
@@ -3592,9 +3634,12 @@ const BONDLEN_FORMS = ['box','mid','side','along'], BONDLEN_SCOPES = ['all','hea
 const BONDLEN_SIZE_MIN = 0.18, BONDLEN_SIZE_MAX = 0.6;
 const BONDLEN_DEFAULT = { on:false, form:'side', scope:'heavy', dig:3, size:0.24, color:'auto', weight:500, gap:0.06, halo:true, haloWidth:22, haloColor:'auto', haloOpacity:1 };
 const ATOM_LABEL_DEFAULT = {size:0.42, gap:0.02, color:'#ffffff', background:true};
+const FORMULA_DEPTH_MODES = ['none','tone','width','both'];
 const VIEW_DEFAULT = { style:'stick', axes:false, labels:false,
                        proj:'orthographic', inertia:false, bondOrders:false, zoom:1, bondLen:BONDLEN_DEFAULT,
                        homaDisplay:'outline',
+                       formulaDepth:'none',
+                       formulaHydrogen:false,
                        formulaColor:false,     // ver31: 構造式の元素記号に色を付けるか
                        halo:true };            // ver31: 結合長・HOMA の文字にふち（背景色の縁取り）を付けるか
 let viewCfg = (()=>{
@@ -3605,6 +3650,8 @@ let viewCfg = (()=>{
       if (['ball-stick','spacefill','stick','formula','flat','wire'].includes(o.style)) d.style = o.style;   // ver31: 構造式・フラット
       if (['plain','number','outline','outside'].includes(o.homaDisplay)) d.homaDisplay = o.homaDisplay;
       if (typeof o.formulaColor === 'boolean') d.formulaColor = o.formulaColor;
+      if (typeof o.formulaHydrogen === 'boolean') d.formulaHydrogen = o.formulaHydrogen;
+      if (FORMULA_DEPTH_MODES.includes(o.formulaDepth)) d.formulaDepth = o.formulaDepth;
       if (typeof o.halo === 'boolean') d.halo = o.halo;   // ver31: 古い保存データには無い。無ければふちあり
       if (o.proj === 'perspective' || o.proj === 'orthographic') d.proj = o.proj;
       ['axes','labels','inertia','bondOrders'].forEach(k => { if (typeof o[k] === 'boolean') d[k] = o[k]; });
@@ -4626,6 +4673,9 @@ function _gamessAtoms(lines) {
     }
   }
   if (start < 0) return null;
+  return _gamessAtomBlock(lines, start, bohr);
+}
+function _gamessAtomBlock(lines, start, bohr) {
   const f = bohr ? BOHR : 1, atoms = [];
   const rowRe = /^\s*(\S+)\s+(\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s*$/;
   for (let i = start + 1; i < lines.length; i++) {
@@ -4636,6 +4686,37 @@ function _gamessAtoms(lines) {
     atoms.push({ idx: atoms.length + 1, symbol: sym, x: +m[3] * f, y: +m[4] * f, z: +m[5] * f });
   }
   return atoms.length ? atoms : null;
+}
+// GAMESS prints the target-state energy and convergence data after each geometry.
+function _gamessOptHistory(lines, atomCount) {
+  const history = [];
+  let atoms = null, current = null, targetRoot = null;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const angstrom = line.includes('COORDINATES OF ALL ATOMS ARE (ANGS)');
+    if (angstrom || (!history.length && /ATOM\s+ATOMIC\s+COORDINATES \(BOHR\)/.test(line))) {
+      atoms = _gamessAtomBlock(lines, i, !angstrom);
+      current = null;
+      targetRoot = null;
+      continue;
+    }
+    const root = line.match(/^\s*SELECTING EXCITED STATE IROOT=\s*(\d+)\b/);
+    if (root) targetRoot = +root[1];
+    const step = line.match(/^\s*NSERCH=\s*(\d+)\s+ENERGY=\s*([+-]?\d+\.\d+(?:[DE][+-]?\d+)?)/i);
+    if (step) {
+      current = null;
+      if (atoms?.length === atomCount) {
+        current = { step: +step[1] + 1, energy: +step[2].replace(/D/i, 'E'), atoms, lineIdx: i, conv: null, targetRoot };
+        history.push(current);
+      }
+      atoms = null;
+      targetRoot = null;
+      continue;
+    }
+    const gradient = current && line.match(/MAXIMUM GRADIENT\s*=\s*([\d.]+)\s+RMS GRADIENT\s*=\s*([\d.]+)/);
+    if (gradient) current.conv = { fmax: { value: +gradient[1] }, frms: { value: +gradient[2] } };
+  }
+  return history;
 }
 // MRSF-TDDFT の状態。GAMESS の励起エネルギーは三重項 ROHF の参照状態から測った値で、
 // 基底状態（最も低い応答状態）が負になる。そのままではスペクトルが描けず意味もずれるので、
@@ -4718,8 +4799,11 @@ function parseGamessLog(text) {
   // 最終エネルギー：MRSF なら注目状態（IROOT）、それ以外は SCF の最終値
   let energy = null;
   for (const l of lines) {
-    const m = l.match(/SELECTING EXCITED STATE IROOT=\s*\d+\s+AT E=\s*(-?\d+\.\d+)/);
-    if (m) energy = +m[1];
+    const m = l.match(/SELECTING EXCITED STATE IROOT=\s*(\d+)\s+AT E=\s*(-?\d+\.\d+)/);
+    if (m) {
+      energy = +m[2];
+      if (tddft) tddft.targetRoot = +m[1];
+    }
   }
   if (energy == null) energy = numAfter(/FINAL \S+ ENERGY IS\s+(-?\d+\.\d+)/);
   let solvent = null;
@@ -4739,6 +4823,8 @@ function parseGamessLog(text) {
     }
   }
   const runtyp = (ctrl.RUNTYP || '').toUpperCase();
+  const optHistory = runtyp === 'OPTIMIZE' ? _gamessOptHistory(lines, atoms.length) : [];
+  const finalStep = optHistory.at(-1);
   const env = { program: 'GAMESS', cores: null, nodes: null, mem: null, elapsedSec: null, host: null };
   {
     const head = text.slice(0, 200000);
@@ -4756,15 +4842,28 @@ function parseGamessLog(text) {
       if (w) { env.elapsedSec = +w[1]; break; }
     }
   }
+  const inputText = lines.flatMap(line => {
+    const card = line.match(/^\s*INPUT CARD>(.*)$/);
+    return card ? [card[1].trimEnd()] : [];
+  }).join('\n');
+  const inputPointGroup = inputText.match(/^[ \t]*\$DATA[ \t]*\n[^\n]*\n[ \t]*([A-Z][A-Z0-9*]*)[ \t]*$/im)?.[1];
   return {
     program: 'gamess', env,
+    inputText, inputPointGroup, noSym: ctrl.NOSYM,
+    referenceMult: ctrl.MULT,
+    inputRoot: td.IROOT,
+    responseTolerance: td.CNVTOL,
+    optTolerance: runtyp === 'OPTIMIZE' ? text.match(/^\s*OPTTOL\s*=\s*([\d.EeDd+-]+)/m)?.[1] : null,
+    isSpinFlip: tdType === 'SPNFLP',
+    responseMethod: isMRSF ? 'MRSF-TDDFT' : tdType === 'SPNFLP' ? 'SF-TDDFT' : null,
+    functional: dft !== 'NONE' ? dft : null,
     // 左パネル・ステータスバーのジョブ種別は Gaussian のルートから判定しているので、RUNTYP を同じ語に写す
     route: runtyp === 'OPTIMIZE' ? 'opt' : runtyp === 'HESSIAN' ? 'freq' : '',
     method: isMRSF ? `MRSF-${dft !== 'NONE' ? dft : scf}` : (dft !== 'NONE' ? dft : scf),
     basis: _gamessBasisName(bas),
     charge: parseInt(ctrl.ICHARG) || 0, mult: targetMult, solvent,
-    scanCoords: [], nScanPoints: 1, isScan: false, optHistory: [],
-    scanData: [{ atoms, energy, scanVals: {}, s2: null }],
+    scanCoords: [], nScanPoints: 1, isScan: false, optHistory,
+    scanData: [{ atoms: finalStep?.atoms ?? atoms, energy: finalStep?.energy ?? energy, scanVals: {}, s2: null }],
     filename: '',
     // 軌道エネルギー・電荷・双極子はログにあるが、MRSF では参照状態（三重項 ROHF）の値で
     // 求めた状態の値ではない。取り違えを避けるため今は読まない
@@ -4958,7 +5057,7 @@ function initViewer() {
   // クリアされた空の canvas がそのフレームで一度そのまま画面に出てしまう。
   // サイズ変更直後に同期で 1 枚描いておけば、空フレームが表に出ない。
   const ro = new ResizeObserver(()=>{
-    if (resizeViewer()) { controls.update(); renderer.render(scene, camera); }
+    if (resizeViewer()) { controls.update(); renderMoleculeScene(); }
   });
   ro.observe(canvas);
 
@@ -5059,7 +5158,7 @@ function initViewer() {
     if (_nicsGridGrp?.visible) _nicsGridGrp.position.set(-moleculeCentroid.x, -moleculeCentroid.y, -moleculeCentroid.z);   // 2026-10-25
     _jcurFlowFrame(performance.now());
     _jcurAnimFrame(performance.now());
-    renderer.render(scene, camera);
+    renderMoleculeScene();
   }
   animate();
 }
@@ -5516,7 +5615,7 @@ function buildMolecule(atoms, fixedBonds) {
   // ver31: 構造式で省く水素（C に付いた H）と、元素記号に足す水素の数（O–H → OH）
   const _fmAdj = isFormula ? atoms.map(() => []) : null;
   if (isFormula) bonds.forEach(([i, j]) => { _fmAdj[i].push(j); _fmAdj[j].push(i); });
-  const _fmHidden = isFormula ? atoms.map((a, i) => a.symbol === 'H' && _fmAdj[i].length > 0) : null;
+  const _fmHidden = isFormula ? atoms.map((a, i) => !viewCfg.formulaHydrogen && a.symbol === 'H' && _fmAdj[i].length > 0) : null;
   const _fmLabeled = isFormula ? atoms.map((a, i) => !_fmHidden[i] &&
     (a.symbol !== 'C' || _fmAdj[i].every(k => _fmHidden[k]))) : null;   // 炭素は書かない（線が1本も残らないときだけ書く）
   if (isFormula) _formulaInk = _formulaInkFor();
@@ -5666,6 +5765,7 @@ function buildMolecule(atoms, fixedBonds) {
       return ok[0];
     };
 
+    let formulaBondCenter;
     // 円柱1本（p→q）
     const _cyl = (p, q, r, sym, seg) => {
       const d = q.clone().sub(p); const L = d.length(); if (L < 1e-4) return;
@@ -5682,6 +5782,7 @@ function buildMolecule(atoms, fixedBonds) {
       const mesh = new THREE.Mesh(g, m);
       mesh.position.copy(p.clone().add(q).multiplyScalar(0.5));
       mesh.quaternion.setFromUnitVectors(_UP, d.normalize());
+      if (isFormula) mesh.userData.formulaBondCenter = formulaBondCenter;
       scene.add(mesh);
       bondMeshes.push(mesh);
     };
@@ -5712,6 +5813,8 @@ function buildMolecule(atoms, fixedBonds) {
       const dir = B.clone().sub(A);
       const len = dir.length();
       dir.normalize();
+
+      if (isFormula) formulaBondCenter = A.clone().lerp(B, 0.5);
 
       // ver9: bond order (only when the feature is on and the element filter allows it)
       // ver31: 構造式ではいつも多重結合を描く（二重線のない構造式は読めないため。元素の絞り込みも使わない）。値は上の _ord
@@ -6014,7 +6117,7 @@ window.revealSetting = function(cardId){
 window.toggleViewMenu = function(){ buildViewMenu(); revealSetting('viewstyle-card'); };
 // ver18: 左パネルの節の開閉。開いている節の id を glv-side-open に JSON で残す
 //   （「設定」タブの glv-settings-open と同じやり方）。未設定なら全部開いたまま。
-const SIDE_FOLD_SECS = ['side-files-sec','loc-side-sec','srv-side-sec','side-cond-sec','side-cite-sec','side-env-sec','side-key-sec','side-thermo-sec'];
+const SIDE_FOLD_SECS = ['side-files-sec','loc-side-sec','srv-side-sec','side-cond-sec','side-cite-sec','side-input-sec','side-env-sec','side-key-sec','side-thermo-sec'];
 // ver31: 保存の形を「開いている id の配列」から {open, known} にした。配列だけだと、あとから足した節
 //   （side-cite-sec）が「畳んだ節」と見分けられず、前から使っている人には畳んだまま出てしまう。
 //   known に無い節（保存したあとに足した節）は開いて始める。古い配列は ver18 の7つを known とみなす
@@ -6025,10 +6128,10 @@ function _sideOpenLoad() {
     const open = Array.isArray(v) ? v : v && Array.isArray(v.open) ? v.open : null;
     if (open) {
       const known = Array.isArray(v) ? SIDE_FOLD_V18 : (Array.isArray(v.known) ? v.known : SIDE_FOLD_V18);
-      return SIDE_FOLD_SECS.filter(id => open.includes(id) || !known.includes(id));
+      return SIDE_FOLD_SECS.filter(id => open.includes(id) || (id !== 'side-input-sec' && !known.includes(id)));
     }
   } catch(_) {}
-  return SIDE_FOLD_SECS.slice();
+  return SIDE_FOLD_SECS.filter(id => id !== 'side-input-sec');
 }
 function _sideOpenSave() {
   const open = SIDE_FOLD_SECS.filter(id => { const e = document.getElementById(id); return e && !e.classList.contains('folded'); });
@@ -6265,7 +6368,7 @@ window.openAxisSettings = function(){
 };
 // 中央で開き、見出しをドラッグして移動。操作ボタンはドラッグ対象にしない。
 {
-  for (const dialog of document.querySelectorAll('#axis-settings-dialog,#bondlen-settings-dialog,#atom-label-dialog,#bondorder-dialog,#color-settings-dialog,#orb-settings-dialog,#nics-settings-dialog,#jcur-settings-dialog,#jcur-3d-settings-dialog')) {
+  for (const dialog of document.querySelectorAll('#motion-settings-dialog,#axis-settings-dialog,#bondlen-settings-dialog,#atom-label-dialog,#bondorder-dialog,#color-settings-dialog,#orb-settings-dialog,#nics-settings-dialog,#jcur-settings-dialog,#jcur-3d-settings-dialog')) {
   const handle = dialog.querySelector('.axis-dialog-head');
   let drag = null;
   const place = (left, top) => {
@@ -6741,6 +6844,7 @@ function _formulaLabelSprite(sym, nH){
   ctx.fillText(sym + hTxt, pad, h / 2 + 5);
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color: _formulaElColor(sym), transparent: true, depthTest: false, depthWrite: false }));
+  sp.userData.formulaLabelColor = sp.material.color.clone();
   const sh = FORMULA_LABEL_H * (h / fs), k = sh / h;   // k：canvas の 1 px が何 Å か
   sp.scale.set(sh * w / h, sh, 1);
   /* 2026-10-25: 原子の位置に置くのは元素記号の字そのもの（インクの箱）の真ん中。線を止める距離（userData.gap）も、
@@ -6761,11 +6865,118 @@ function placeFlatAtoms(){
   _flatZ.setFromMatrixColumn(camera.matrixWorld, 2).normalize();
   atomMeshes.forEach(m => { if (m.userData.base) m.position.copy(m.userData.base).addScaledVector(_flatZ, FLAT_ATOM_LIFT); });
 }
+// ver31: 全ての線分に結合中点の奥行きを使い、多重結合の線も一緒に変える。
+const _formulaDepthAxis = new THREE.Vector3();
+const _formulaDepthBg = new THREE.Color();
+function updateFormulaDepth(){
+  if (displayStyle !== 'formula' || viewCfg.formulaDepth === 'none' || !bondMeshes.length) return;
+  camera.getWorldDirection(_formulaDepthAxis).negate();
+  let far = Infinity, near = -Infinity;
+  for (const mesh of bondMeshes) {
+    const position = mesh.userData.formulaBondCenter || mesh.position;
+    const depth = position.dot(_formulaDepthAxis);
+    mesh.userData.formulaDepth = depth;
+    far = Math.min(far, depth);
+    near = Math.max(near, depth);
+  }
+  if (far === Infinity) return;
+  const center = (far + near) / 2;
+  // 正面を向いた平面など、奥行き差が小さいときは差を誇張しない。
+  const span = Math.max(near - far, 1);
+  const shading = formulaDepthEnabled('tone');
+  const lineWidth = formulaDepthEnabled('width');
+  if (shading) _formulaDepthBg.set(customBgColor || _themeBgHex());
+  for (const mesh of bondMeshes) {
+    const {formulaLabelColor} = mesh.userData;
+    const depth = (mesh.userData.formulaDepth - center) / span;
+    if (shading) {
+      const color = mesh.material.color;
+      if (formulaLabelColor) color.copy(formulaLabelColor);
+      else color.setHex(_formulaInk);
+      color.lerp(_formulaDepthBg, 0.56 * Math.max(0, -depth));
+    }
+    if (lineWidth && !formulaLabelColor) {
+      const width = 1 + 1.14 * depth;
+      mesh.scale.set(width, 1, width);
+    }
+  }
+}
+// ver31: 濃淡は描画中だけ加え、電荷などが参照する元の材質色を戻す。
+function renderMoleculeScene(){
+  if (displayStyle === 'formula') updateFormulaDepth();
+  if (displayStyle === 'formula' || !formulaDepthEnabled('tone')) {
+    renderer.render(scene, camera);
+    return;
+  }
+  const meshes = [...atomMeshes, ...bondMeshes];
+  camera.getWorldDirection(_formulaDepthAxis).negate();
+  let far = Infinity, near = -Infinity;
+  for (const mesh of meshes) {
+    const position = mesh.userData.base || mesh.position;
+    const depth = position.dot(_formulaDepthAxis);
+    mesh.userData.depthToneDepth = depth;
+    far = Math.min(far, depth);
+    near = Math.max(near, depth);
+  }
+  const center = (far + near) / 2;
+  const span = Math.max(near - far, 1);
+  _formulaDepthBg.set(customBgColor || _themeBgHex());
+  try {
+    for (const mesh of meshes) {
+      const color = mesh.material.color;
+      const saved = mesh.userData.depthToneColor ??= new THREE.Color();
+      saved.copy(color);
+      color.lerp(_formulaDepthBg, 0.8 * Math.max(0, (center - mesh.userData.depthToneDepth) / span));
+    }
+    renderer.render(scene, camera);
+  } finally {
+    for (const mesh of meshes) mesh.material.color.copy(mesh.userData.depthToneColor);
+  }
+}
+function formulaDepthEnabled(effect){
+  return viewCfg.formulaDepth === effect || viewCfg.formulaDepth === 'both';
+}
+window.toggleFormulaDepth = function(effect){
+  if (effect !== 'tone' && effect !== 'width') return;
+  const other = effect === 'tone' ? 'width' : 'tone';
+  const enabled = formulaDepthEnabled(effect);
+  const otherEnabled = formulaDepthEnabled(other);
+  viewCfg.formulaDepth = enabled ? (otherEnabled ? other : 'none') : (otherEnabled ? 'both' : effect);
+  saveViewCfg();
+  syncFormulaOpts();
+  if (displayStyle !== 'formula') return;
+  for (const mesh of bondMeshes) {
+    const {formulaLabelColor} = mesh.userData;
+    if (formulaLabelColor) mesh.material.color.copy(formulaLabelColor);
+    else {
+      mesh.scale.set(1, 1, 1);
+      mesh.material.color.setHex(_formulaInk);
+    }
+  }
+  updateFormulaDepth();
+};
 function syncFormulaOpts(){
+  document.getElementById('fm-depth-width-btn').style.display = displayStyle === 'formula' ? '' : 'none';
+  for (const effect of ['tone','width']) {
+    const button = document.getElementById('fm-depth-' + effect + '-btn');
+    const enabled = formulaDepthEnabled(effect);
+    button.classList.toggle('active', enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+  }
+  const hydrogen = document.getElementById('fm-hydrogen-btn');
+  hydrogen.style.display = displayStyle === 'formula' ? '' : 'none';
+  hydrogen.classList.toggle('active', viewCfg.formulaHydrogen);
+  hydrogen.setAttribute('aria-pressed', String(viewCfg.formulaHydrogen));
   const b = document.getElementById('fm-color-btn'); if (!b) return;
   b.style.display = displayStyle === 'formula' ? '' : 'none';
   b.classList.toggle('active', !!viewCfg.formulaColor);
 }
+window.toggleFormulaHydrogen = function(){
+  viewCfg.formulaHydrogen = !viewCfg.formulaHydrogen;
+  saveViewCfg();
+  syncFormulaOpts();
+  if (displayStyle === 'formula' && _bondLenSrc) buildMolecule(_bondLenSrc.atoms, _bondLenSrc.bonds);
+};
 window.toggleFormulaColor = function(){
   viewCfg.formulaColor = !viewCfg.formulaColor; saveViewCfg();
   document.getElementById('fm-color-btn')?.classList.toggle('active', viewCfg.formulaColor);
@@ -7713,11 +7924,10 @@ function renderBondLengthPlotStyled(scanData, curIdx) {
   gridSVG += plotTicksSVG(PL, PT, pw, ph, pts.map((p,i)=>px(i)), yMajor, { xMinor:false });
   let d = '';
   pts.forEach((p, i) => { d += (i===0?'M':'L') + px(i).toFixed(1) + ',' + py(p.len).toFixed(1); });
-  // ver18: 点は結合ごとの系列色（一覧の色見本・「各結合長の変化」プロットと同じ割り当て）。
-  // 線は別々の結合を並べてつないだだけで系列ではないので、色を持たせず灰色にする。
-  const lineSVG = `<path d="${d}" fill="none" stroke="var(--text3)" stroke-width="1.4"/>`;
+  // ver31: 結合は横軸の文字で識別できるので、点と線は軸と同じ色にそろえる。
+  const lineSVG = `<path d="${d}" fill="none" stroke="var(--plot-axis)" stroke-width="1.4"/>`;
   let dotsSVG = '';
-  pts.forEach((p, i) => { dotsSVG += `<circle cx="${px(i).toFixed(1)}" cy="${py(p.len).toFixed(1)}" r="3.6" fill="${BOND_PLOT_COLORS[i % BOND_PLOT_COLORS.length]}"><title>${p.name}: ${p.len.toFixed(4)} Å</title></circle>`; });
+  pts.forEach((p, i) => { dotsSVG += `<circle cx="${px(i).toFixed(1)}" cy="${py(p.len).toFixed(1)}" r="3.6" fill="var(--plot-axis)"><title>${p.name}: ${p.len.toFixed(4)} Å</title></circle>`; });
   const axesSVG = `<line class="plot-axis" x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+ph}"/><line class="plot-axis" x1="${PL}" y1="${PT+ph}" x2="${W-PR}" y2="${PT+ph}"/>`;
   const xtFS = plotTitleFS('bond', pw), yt = plotYTitle('bond length / Å', H, PT, ph);   // ver16
   const labelSVG = `<text class="plot-label" style="font-size:${xtFS}px" x="${PL + pw/2}" y="${(H-xtFS*0.4).toFixed(1)}" text-anchor="middle">bond</text><text class="plot-label" style="font-size:${yt.fs}px" transform="rotate(-90 ${(fs*1.3).toFixed(1)} ${yt.cy})" x="${(fs*1.3).toFixed(1)}" y="${yt.cy}" text-anchor="middle">bond length / Å</text>`;
@@ -8391,7 +8601,6 @@ function updateParameterPanel() {
         const ord = String.fromCharCode(97 + k); // a, b, c, ...
         const rm = `<button class="ui-ghost ui-icon-action" onclick="removeBondAt(${k})" title="${_JAb?'選択から外す':'Remove from selection'}">${uiIcon('close','ui-icon-sm')}</button>`;
         return `<div class="bl-row" draggable="true" data-bi="${k}">
-          <span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${BOND_PLOT_COLORS[k % BOND_PLOT_COLORS.length]};flex-shrink:0"></span>
           <span class="bl-ord">${ord}</span>
           <span>${a1.symbol}${a1.idx}–${a2.symbol}${a2.idx}</span>
           <span style="margin-left:auto;color:var(--accent)">${d.toFixed(4)} Å</span>
@@ -8951,6 +9160,8 @@ function rebuildMainUI() {
     const f = withE.length > 1 ? withE : parsedResult.optHistory.filter(d => d.atoms && d.atoms.length);
     if (f.length > 1) optFrames = f;
   }
+  const optEmpty = document.getElementById('opt-history-empty');
+  if (optEmpty) optEmpty.style.display = !isScan && !optFrames && jobKinds(parsedResult).includes('Opt') ? '' : 'none';
   if (optAnimCard) {
     optAnimCard.style.display = optFrames ? 'block' : 'none';
     if (optFrames) {
@@ -10677,7 +10888,7 @@ function _viewerCanvas(scale, transparent){
     if (labelSprites.length) placeAtomLabels();
     placeHomaLabels();
     _jcurFlowViewport();
-    renderer.render(scene,camera);
+    renderMoleculeScene();
     const src=renderer.domElement;
     const out=document.createElement('canvas');
     out.width=src.width; out.height=src.height;
@@ -16943,7 +17154,11 @@ async function loadTextAsFile(text, filename, saveToRecentFlag) {
     : `Loaded ${filename}${_loadNotes.length ? ` · ${_loadNotes.join(' · ')}` : ''}`;
   // ver16: 起動時の一括復元では、ファイルごとに出さずに最後へまとめる
   if (!_restoringOpen) showToast(_loadMsg);
-  if (typeof setTab === 'function') setTab(result.isTDDFT ? 'spectrum' : 'structure');
+  if (typeof setTab === 'function') {
+    const initialTab = jobKinds(result).includes('Opt') && tabAvailable('opt') ? 'opt'
+      : result.isTDDFT ? 'spectrum' : 'structure';
+    setTab(initialTab);
+  }
   saveOpenFiles();   // ver16: 次に開いたときこのファイルを戻せるように
   return { id: sess.id, reused: false, changed: true };   // ver31: 呼ぶ側が「開いたファイル」を知るため（開けなければ undefined）
 }
@@ -17298,23 +17513,24 @@ window.renderTDDFTSpectrum = function() {
   const prims=_specPrims(W,H);
   if(prims){ svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.innerHTML=_specPrimsToSVG(prims); }
   const transitionHead=lang==='ja'?'遷移':'Transition', coeffHead=lang==='ja'?'係数':'Coefficient';
-  const showS2=!!data.unrestricted;
+  const isMRSF=data.method==='MRSF';
+  const showS2=data.unrestricted||isMRSF;
   // ver28: 列の幅を割合で決めるのをやめた（表は .ui-table で中身の幅。広げても列が離れない）
   // ver18: 日本語表示でも見出しが英語のままだった。値の桁もログ（小数2桁）に合わせる
   // ver26: 列見出しのクリックで並べ替え。「状態」は元の順（idx）に戻すボタン
-  const st=sortTableState('tddft', {e:'asc', wl:'asc', f:'desc', s2:'asc'}, renderTDDFTSpectrum);
+  const st=sortTableState('tddft', {e:'asc', total:'asc', wl:'asc', f:'desc', s2:'asc'}, renderTDDFTSpectrum);
   const JAs=lang==='ja', hc=(label,key)=>`<th class="r"${sortAria(key,st)}>${sortHeadBtn(label,key,st,true)}</th>`;
   document.getElementById('spec-state-head').innerHTML=
-    `<tr>${hc(JAs?'状態':'State','idx')}${hc(JAs?'励起エネルギー / eV':'Energy / eV','e')}${hc('λ / nm','wl')}${hc(JAs?'振動子強度 f':'f','f')}${showS2?hc('⟨S²⟩','s2'):''}</tr>`;
-  const stOrder=sortOrder(data.states.length, (i,k)=>{ const q=data.states[i], v=k==='e'?q.energy:k==='wl'?q.wavelength:k==='f'?q.fosc:k==='s2'?q.s2:i; return Number.isFinite(v)?v:null; }, st);
+    `<tr>${hc(JAs?'状態':'State','idx')}${hc(isMRSF?(JAs?'最低状態からの ΔE / eV':'ΔE from lowest state / eV'):(JAs?'励起エネルギー / eV':'Energy / eV'),'e')}${isMRSF?hc(JAs?'全エネルギー / Eh':'Total energy / Eh','total'):''}${hc('λ / nm','wl')}${hc(JAs?'振動子強度 f':'f','f')}${showS2?hc('⟨S²⟩','s2'):''}</tr>`;
+  const stOrder=sortOrder(data.states.length, (i,k)=>{ const q=data.states[i], v=k==='e'?q.energy:k==='total'?q.energyHa:k==='wl'?q.wavelength:k==='f'?q.fosc:k==='s2'?q.s2:i; return Number.isFinite(v)?v:null; }, st);
   document.getElementById('spec-state-body').innerHTML=stOrder.map(i=>data.states[i]).map(s=>{
     const selected=s.state===data.selectedState;
-    const main=`<tr class="click${selected?' sel':''}" onclick="selectTDDFTState(${s.state})"><td class="r"><span class="spec-state-arrow">${uiIcon(selected?'chevron-down':'chevron-right','ui-icon-sm')}</span>${_specEsc(s.label ?? s.state)}</td><td class="r">${_specFmt(s.energy,2)}</td><td class="r">${_specFmt(s.wavelength,2)}</td><td class="r">${_specFmt(s.fosc,4)}</td>${showS2?`<td class="r">${_specFmt(s.s2,4)}</td>`:''}</tr>`;   // ver18: 444.7000 のような余分な 0 をやめる
+    const main=`<tr class="click${selected?' sel':''}" onclick="selectTDDFTState(${s.state})"><td class="r"><span class="spec-state-arrow">${uiIcon(selected?'chevron-down':'chevron-right','ui-icon-sm')}</span>${_specEsc(s.label ?? s.state)}${isMRSF&&s.state===data.targetRoot?' <span class="side-n">IROOT='+s.state+'</span>':''}</td><td class="r">${_specFmt(s.energy,2)}</td>${isMRSF?`<td class="r">${_specFmt(s.energyHa,8)}</td>`:''}<td class="r">${_specFmt(s.wavelength,2)}</td><td class="r">${_specFmt(s.fosc,4)}</td>${showS2?`<td class="r">${_specFmt(s.s2,4)}</td>`:''}</tr>`;   // ver18: 444.7000 のような余分な 0 をやめる
     if(!selected)return main;
     const detail=s.transitions.length
       ? `<table class="ui-table spec-transition-table"><thead><tr><th>${transitionHead}</th><th class="r">${coeffHead}</th></tr></thead><tbody>${s.transitions.map(tr=>`<tr><td>${_specEsc(tr.label)}</td><td class="r">${Number.isFinite(tr.coeff)?tr.coeff.toFixed(5):'—'}</td></tr>`).join('')}</tbody></table>`
       : `<div class="spec-transition-empty">${lang==='ja'?'遷移情報なし':'No transition data'}</div>`;
-    return main+`<tr class="spec-detail-row"><td colspan="${showS2?5:4}">${detail}</td></tr>`;
+    return main+`<tr class="spec-detail-row"><td colspan="${4+Number(showS2)+Number(isMRSF)}">${detail}</td></tr>`;
   }).join('');
 };
 window.selectTDDFTState = function(n) {
@@ -21938,7 +22154,8 @@ function updateOptStepLabel(i) {
   const jb = parsedResult && parsedResult.jobs && parsedResult.jobs.length > 1 && parsedResult.jobIdx == null
           && _optFrames[i].job != null ? parsedResult.jobs[_optFrames[i].job] : null;
   // ver29: 同じ札を「最適化」タブと「実行状況」タブの両方に出している
-  const stepTxt = jb ? `Step ${stepNo} · ${lang === 'en' ? 'job' : 'ジョブ'} ${jb.n}` : `Step ${stepNo}`;
+  const root = _optFrames[i].targetRoot;
+  const stepTxt = jb ? `Step ${stepNo} · ${lang === 'en' ? 'job' : 'ジョブ'} ${jb.n}` : `Step ${stepNo}${root == null ? '' : ` · Root ${root}`}`;
   ['opt-val-display','job-val-display'].forEach(id => {
     const el = document.getElementById(id); if (el) el.textContent = stepTxt; });
   // scan-style energy readout: ΔE relative to the lowest point along the trajectory
@@ -22900,7 +23117,7 @@ const TAB_CARDS = {
   //   最適化の経過とは関係がない（「最適化」タブに置いてあったせいで、最適化でないファイルでも
   //   このタブが出ていた）。.gjf の書き出しは「作成」タブへ移り、エクスポートのカードは無くなった。
   structure: ['param-card','bllabel-card','geom-card','geom-plot-card','bondlen-card','atom-table-card'],
-  opt: ['scan-nav-card','opt-anim-card','scan-sum-card','s2-plot-card'],
+  opt: ['scan-nav-card','opt-history-empty','opt-anim-card','scan-sum-card','s2-plot-card'],
   // ver20: 「キュー」はサーバー全体の話で、開いているログとは関係がないので別のタブにした
   //   （design/queue-job-split-comparison.html の案A）。「ジョブ」は開いているログ1つの話だけ。
   queue: ['jq-card'],
@@ -22980,11 +23197,17 @@ function syncTabOverlays() {
 }
 // ver20: 「作成」も追加。3D に構造が出ている以上、そこから次の入力を書けるのはどのログでも同じ
 const TDDFT_TABS = ['spectrum','create','settings'];   // ver17: 通常のログと同じく設定を後ろに   // ver13: 3Dが出ている以上、表示設定はどのログでも要る
+function tddftTabAllowed(tab) {
+  return TDDFT_TABS.includes(tab)
+    || (tab === 'structure' && !!parsedResult?.scanData?.some(frame => frame.atoms?.length))
+    || (tab === 'opt' && (parsedResult?.optHistory?.length > 1 || jobKinds(parsedResult).includes('Opt')));
+}
 function arrangeTabButtons() {
   const strip = document.getElementById('tab-strip');
   if (!strip) return;
+  const preferred = ['structure', 'spectrum', 'opt', 'create', 'settings'];
   const order = parsedResult?.isTDDFT
-    ? [...TDDFT_TABS, ...TAB_ORDER.filter(tab => !TDDFT_TABS.includes(tab))]
+    ? [...preferred, ...TAB_ORDER.filter(tab => !preferred.includes(tab))]
     : TAB_ORDER;
   order.forEach(tab => {
     const btn = strip.querySelector(`.tab-btn[data-tab="${tab}"]`);
@@ -23177,7 +23400,7 @@ window.renderSettingsPanel = function() {
 };
 window.setTab = function(tab) {
   if (!TAB_CARDS[tab]) return;
-  if (parsedResult?.isTDDFT && !TDDFT_TABS.includes(tab)) return;
+  if (parsedResult?.isTDDFT && !tddftTabAllowed(tab)) return;
   // ver9: the scan (and opt-trajectory) animation drives the 3D view AND the
   // structure-tab plots in lockstep, so let it keep running while the user is on
   // either the Scan/Optimization tab or the Structure tab. Other tabs stop it.
@@ -23273,7 +23496,7 @@ function tabAvailable(tab) {
   //   新しい .gjf を書くだけなので、元がログでも .fchk でも .mol でも同じことができる
   // ver25: ただし何も開いていないときは初期構造が無いので出さない（設定とキューだけ残る）
   if (tab === 'create') return !!parsedResult;
-  if (parsedResult?.isTDDFT) return TDDFT_TABS.includes(tab);
+  if (parsedResult?.isTDDFT) return tddftTabAllowed(tab);
   // ver31: 「環電流」は jvec.vti を添えたとき、または電流密度を作れる計算のログ（GIMIC 用・ACID。読み込みの案内だけを出す）
   //   NMR なら何でも出していたのをやめた（2D NICS のログにも空のタブが出たため）
   if (tab === 'jcur') return !!currentJvec || !!gimicRes || (kind !== 'mol' && kind !== 'cube' && _logMakesCurrent(parsedResult));   // ver31: GIMIC の結果
@@ -23314,7 +23537,7 @@ function updateTabAvailability() {
       // TD-DFT の結果が無いから、電荷ならスキャンだから…）ので、押せない
       // 選択肢を並べるより、そのログで読めるものだけを見せるほうが早い。
       // disabled も同時に立てて、キーボード移動の対象から外す。
-      const shown = has && !(isTDDFT && !TDDFT_TABS.includes(tab));
+      const shown = has;
       btn.style.display = shown ? '' : 'none';
       btn.disabled = !shown;
       btn.setAttribute('draggable', isTDDFT ? 'false' : 'true');
@@ -23510,6 +23733,12 @@ function renderSideInfo() {
   if (!cond || !key) return;
   renderCiteSide();   // ver31: 節「文献」は計算条件から決まる。下の早い return（ファイルなし・構造だけ）より前に
   const r = parsedResult;
+  const inputSec = document.getElementById('side-input-sec');
+  const input = document.getElementById('side-input');
+  if (inputSec && input) {
+    inputSec.style.display = r?.inputText ? '' : 'none';
+    input.textContent = r?.inputText || '';
+  }
   const secs = ['side-cond-sec','side-key-sec','side-env-sec','side-thermo-sec'].map(id => document.getElementById(id));
   if (!r) { secs.forEach(e => { if (e) e.style.display = 'none'; }); document.getElementById('symmetry-log-section').style.display='none'; return; }
   secs.forEach(e => { if (e) e.style.display = ''; });
@@ -23578,10 +23807,19 @@ function renderSideInfo() {
   //   ファイルから読んだ値ではないので、読んだ値と同じ顔で並べない
   const isXyz = r.jobType === 'xyz';
   cond.innerHTML =
-    row(JA?'手法':'Method', r.method ? methodLabel(r.method) : null) +
+    row(JA?'手法':'Method', r.responseMethod ?? (r.method ? methodLabel(r.method) : null)) +
+    (r.responseMethod ? row(JA?'汎関数':'Functional', r.functional ? methodLabel(r.functional) : null) : '') +
     row(JA?'基底関数':'Basis', r.basis ? basisLabel(r.basis) : null) +
-    (isXyz ? '' : row(JA?'電荷 / 多重度':'Charge / Mult', (r.charge == null || r.mult == null) ? null : `${r.charge} / ${r.mult}`)) +
+    (isXyz ? '' : row(r.isSpinFlip ? (JA?'電荷 / 参照多重度':'Charge / Ref. mult.') : (JA?'電荷 / 多重度':'Charge / Mult'), (r.charge == null || r.mult == null) ? null : `${r.charge} / ${r.mult}`)) +
     // .fchk には溶媒の記録がないので、「気相」と決め打ちせず行ごと出さない
+    (r.responseMethod && !r.isSpinFlip ? row(JA?'参照多重度':'Reference multiplicity', srvEsc(r.referenceMult ?? '')) : '') +
+    (r.responseMethod ? row(JA?'対象Root':'Target root', srvEsc(r.inputRoot ?? '')) +
+      row(JA?'応答収束閾値（CNVTOL）':'Response tolerance (CNVTOL)', srvEsc(r.responseTolerance ?? '')) : '') +
+    (r.inputPointGroup ? rowH(JA?'入力点群':'Input point group', pgHTML(r.inputPointGroup)) : '') +
+    row(JA?'対称性の利用':'Use of symmetry', r.noSym === '1' ? (JA?'なし（NOSYM=1）':'Disabled (NOSYM=1)')
+      : r.noSym === '0' ? (JA?'あり（NOSYM=0）':'Enabled (NOSYM=0)')
+      : r.noSym == null ? null : `NOSYM=${srvEsc(r.noSym)}`) +
+    row(JA?'最適化収束閾値（OPTTOL）':'Optimization tolerance (OPTTOL)', srvEsc(r.optTolerance ?? '')) +
     // ver19: ルート行も溶媒の記録も無いファイル（.xyz など）は「気相」と決め打ちしない
     ((isFchk || (!r.route && !r.solvent)) ? '' : row(JA?'溶媒':'Solvent', r.solvent || (solvM ? solvM[1] : (scrfM ? 'SCRF' : (JA?'気相':'gas phase'))))) +
     row(JA?'原子数':'Atoms', nAtoms) +
@@ -24130,6 +24368,9 @@ function renderShortcutsBody(){
 //   - approx: true は、ファイルの更新日時などから後で推定して書いた日付
 const CHANGELOG_ENABLED = false;
 const CHANGELOG = [
+  { date:'2026-11-08', version:'ver31',
+    ja:['構造式で「奥行きの濃淡」と「奥行きの線幅」を個別にオンにできるようにしました。濃淡は結合線と元素記号に適用されます。','構造式で水素原子とその結合を個別に表示できるようにしました。','表示スタイル欄の「設定」と ON/OFF の高さと角丸をそろえました。','ワイヤーフレームにアイコンを追加し、表示スタイルのボタンは右パネルが狭いときに2列に切り替わるようにしました。','表示スタイル名を英語に統一し、ON/OFF の枠線を含む高さを「設定」ボタンにそろえました。','設定タブの ON/OFF の寸法を統一し、グラフ設定のスライダーの位置をそろえました。','「操作」をグラフの設定より上に移し、動きの速さは行内の「設定」から変更できるようにしました。色設定ボタンは色見本の行に移動しました。','すべての表示スタイルで奥行きの濃淡を使えるようにしました。','各パネルの ON/OFF と行内の設定ボタンの高さと角丸を統一しました。'],
+    en:['Formula style can show depth through shading and line width, each with its own switch. Shading applies to bonds and element symbols.','Formula style can show individual hydrogen atoms and their bonds.','Settings buttons and ON/OFF switches in the Display style section now share the same height and corner radius.','Added a Wireframe icon and a two-column display style layout for narrow panels.','Standardized display style names in English and matched the outer height of ON/OFF switches to Settings buttons.','Standardized switches across the Settings tab and aligned the plot settings sliders.','Moved Controls above plot settings, put transition speed in its own settings window, and placed the colour settings button next to the swatches.','Depth shading is available in all display styles.','Unified ON/OFF switches and inline Settings buttons across panels.'] },
   { date:'2026-10-26', version:'ver31', ja:['左パネルのエネルギー（最終エネルギー・熱化学）の単位 kcal/mol を、HOMO の eV と同じく値の後ろに付けました。項目名と1行に入らないときは値が次の行に回ります。','開殻の計算では、左パネルの HOMO・LUMO・ギャップを α と β に分けて出すようにしました。以前は α と β を混ぜて比べていたため、ギャップが負になることがありました。','点群を <i>C</i><sub>2<i>h</i></sub> のように、イタリックと下付きで書くようにしました（左パネル・構造タブ・作成タブ・編集タブ）。','測定の「1つ戻す」「選択解除」を、使えるときだけ出すようにしました。「他ファイルの選択をコピー」は、選択があって原子数が同じファイルがあるときだけ出ます。','原子座標の表に .xyz の書き出しと「コピー」を足しました。.xyz のコメント行にはファイル名とエネルギーが入ります。','右上の「比較」を「ファイル比較」にし、ファイルが2つ以上開いているときだけ出すようにしました。比較の表の ⟨S²⟩ は投影前の値にし、古い脚注（単位ボタンの案内）を外しました。','座標の書き出しとコピーのお知らせが、英語表示でも日本語で出ていたのを直しました。','グラフの設定ウィンドウの下に出ていた説明文（「共通設定を使用中。…」「個別設定を使用しています。」「変更すると、個別設定も解除して…」）を外しました。'], en:['The kcal/mol unit of energies in the left panel (final energy and thermochemistry) now follows each value, like eV for HOMO. When a value does not fit beside its label it moves to the next line.','For open-shell calculations the left panel now shows HOMO, LUMO and gap separately for α and β. Previously α and β were mixed, so the gap could come out negative.','Point groups are now written with italics and subscripts, e.g. <i>C</i><sub>2<i>h</i></sub> (left panel, Structure, Create and Edit tabs).','Undo last pick and Clear selection in Measure now appear only when they can be used. Copy selection from another file appears only when an open file with the same number of atoms has a selection.','Added .xyz export and Copy to the atom coordinate table. The .xyz comment line holds the file name and energy.','Renamed the top-right Compare button to Compare files and show it only when two or more files are open. The comparison table now shows ⟨S²⟩ before annihilation, and an outdated note about a unit button is gone.','Fixed the export and copy messages for coordinates appearing in Japanese in the English interface.','Removed the notes at the bottom of the plot settings window ("Using common settings. …", "Using individual settings.", "Changes replace individual settings …").'] },
   { date:'2026-10-25', version:'ver31', ja:['スペクトルと構造最適化のグラフの設定、作成タブ（gimic・続けて計算）、GIMIC のカード、INICS・NICS-XY-Scan のカードの説明文を外しました。','再生の速さ（1 コマの長さ）を「設定」タブから、スキャン・構造最適化・実行状況のグラフの設定ウィンドウ（歯車）へ移しました。','構造式で、元素記号（お椀形の分子の中心の B など）に斜めから来る結合の線が字に食い込んでいたのを直しました。','「設定」タブで、「元素記号に色」の行の枠が上のボタンの枠と重なっていたのを直し、「グラフのスタイル」と「開発者モード」の説明文を外しました。','ページを開いた直後（前回のファイルを戻している最中）にファイルを落とすと、分けた 3D NICS がまとまらない・戻しているログの .fchk が組にならないことがあったのを直しました。','3D NICS で、Bq の格子がある範囲を 3D に示すようにしました（既定は線の箱。3D の［設定］で線＋面・点に切り替え、下のバーの「格子の範囲」で入/切）。','環電流の 2D の図に描き方「回る向き」（反磁性を青・常磁性を赤で塗り、強さを線の太さで示す流線）、「太さ」（墨一色で太さが強さ）、「矢印（比例）」（長さが強さ）を追加し、既定を「回る向き」にしました。','環電流で、お椀形など平らでない分子では、切り口を「曲面」（分子から一定の高さ）にできるようにしました。3D の切り口の板も曲面になります。','「NICS」タブで 3D NICS（Bq を 3D の格子に並べた NMR のログ、または NICS の cube）を開けるようにしました。3D に ±値 ppm の等値面（iso / zz）を出し、地図には XY / XZ / YZ の切り口を位置を選んで出します。_part1, _part2 … に分けたログは、まとめて開くと1つの格子にします。','3D NICS の等値面の描き方（塗り／網目／陰影）と不透明度を、3D の［設定］で選べるようにしました。','曲がった 2D NICS（分子の表面に沿って Bq を置いたログ）を読めるようにしました。地図に加えて、3D に点の位置の曲面を地図と同じ色で塗ります（選んだ面／両面／点を 3D の［設定］で切り替え）。zz は面の法線方向です。作成タブで書いたログは条件をタイトルから読み、条件の無いログは点の並び順（無理なら最適平面への投影）から格子を作ります。','作成タブの nics の「面」に「分子の表面（曲面）」と「箱（3D の格子）」を追加し、「平面」を「面」に、配置の「2D NICS シート」を「NICS の格子（2D・3D）」にしました。曲面は高さ・置く側（両面／表／裏）・滑らかさ σ、箱は X / Y / Z の範囲・間隔・原子から除く距離・分ける数を指定します。箱は点の数の上限が無く、名前は py.Aroma 5 と同じ <名前>_3D_NICS_0001.gjf で、分けると _0002 … も .zip にまとめて保存します。「除く距離」の既定は 0（点を除かない）で、このとき py.Aroma 5 の 3D NICS でも読めます。どちらも NoSymm を書きます。','曲がった 2D NICS で表と裏を別々に計算したログ（名前の末尾が _p1 と _m1）を一緒に開くと、1つの表示にまとめてカードの「面」で切り替えられるようにしました。','「NICS」タブで py.Aroma 5 の INICS と NICS-XY-Scan のログを読めるようにしました。INICS は環ごとの高さに対する NICS の図と、INICS（ppm·Å、py.Aroma 5 と同じ式）の表、Scan は経路に沿った距離に対する NICS の図を出し、.csv に保存できます。','作成タブの nics の配置に「INICS（環の法線に沿って）」と「NICS-XY-Scan（経路に沿って）」を追加しました。py.Aroma 5 と同じ名前（_INICS / _NICS_Scan）・タイトル・並びで書くので、どちらのアプリでも読めます。','作成タブの平らな 2D NICS シートを py.Aroma 5 でも読める形にしました（保存名を <名前>_2D_NICS.gjf に、Bq の並びを py.Aroma と同じ x（U）が外側に、NoSymm を書く）。','NICS のログの .fchk に入っているゴースト原子（Bq）を原子として読まないようにしました。以前はログと原子数が合わずに組にならず、単独で開くと Bq どうしが結合で結ばれていました。','cube の iso だけを開いたときなど、選んでいる成分が無い格子では、ある成分に切り替えるようにしました（図の寸法が壊れていました）。'], en:['Removed the descriptions in the spectrum and optimization plot settings, on the Create tab (gimic, follow-up job), on the GIMIC card and on the INICS and NICS-XY-Scan cards.','Moved the playback speed (frame length) from the Settings tab to the settings window (gear) of the scan, optimization and run-status plots.','Fixed bonds running into element symbols in the Formula style when they approach at an angle (such as the central B of a bowl-shaped molecule).','On the Settings tab, fixed the "Colour element symbols" row overlapping the buttons above it, and removed the descriptions under Plots and Developer mode.','Fixed files dropped right after opening the page (while the previous files were being restored) sometimes failing to merge split 3D NICS logs or leaving a restored log without its .fchk.','3D NICS now shows the extent of the Bq grid in 3D (a box outline by default; switch to box + faces or points in the 3D Settings, and toggle it with Grid extent on the bar).','Added three styles to the 2D ring-current plot — Tropicity (diatropic blue, paratropic red, line width = strength), Line weight (black, width = strength) and Arrows ∝ |J| (length = strength) — and made Tropicity the default.','For non-planar molecules such as bowls, the ring-current cut can now be a curved surface at a fixed height above the molecule; the 3D cut plate follows it.','The NICS tab now opens 3D NICS: an NMR log with Bq on a 3D grid, or NICS cube files. It shows ± ppm isosurfaces (iso / zz) in 3D and an XY / XZ / YZ cut at a chosen position on the map. Logs split as _part1, _part2 … are merged into one grid when opened together.','The 3D NICS isosurface style (filled / mesh / shaded) and opacity can be chosen in the 3D Settings.','Curved 2D NICS logs (Bq placed along the molecular surface) can now be read. Besides the map, the surface of the points is painted in 3D in the map colours (selected face / both faces / points, in the 3D Settings), and zz is along the surface normal. Logs written by the Create tab are read with the conditions in the title; others get their grid from the point order, or from a projection onto the best-fit plane.','On the Create tab, nics now offers “Molecular surface (curved)” and “Box (3D grid)” as surfaces; “Plane” became “Surface” and the “2D NICS grid” placement became “NICS grid (2D / 3D)”. Curved takes the height, side (both / upper / lower) and smoothness σ; Box takes the X / Y / Z ranges, step, skip distance from atoms and number of files. Box has no point limit, files are named <name>_3D_NICS_0001.gjf as in py.Aroma 5, and when split _0002 … are added in a .zip. The skip distance defaults to 0 (no points skipped), which keeps the result readable by py.Aroma 5. Both write NoSymm.','Curved 2D NICS logs computed separately for the upper and lower faces (names ending in _p1 and _m1) are merged into one view when opened together, with Face on the card switching between them.','The NICS tab now reads py.Aroma 5 INICS and NICS-XY-Scan logs. INICS shows NICS against height for each ring and a table of INICS (ppm·Å, same formula as py.Aroma 5); Scan shows NICS against the distance along the path. Both can be saved as .csv.','The Create tab nics placement now offers “INICS (along ring normals)” and “NICS-XY-Scan (along a path)”, written with the same names (_INICS / _NICS_Scan), title and order as py.Aroma 5 so either app can read them.','Flat 2D NICS grids from the Create tab are now readable by py.Aroma 5: they are saved as <name>_2D_NICS.gjf, Bq are ordered with x (U) outermost as in py.Aroma, and NoSymm is written.','Ghost atoms (Bq) in the .fchk of an NICS run are no longer read as atoms. The .fchk used to fail to pair with its log because the atom counts differed, and when opened alone the Bq were joined by bonds.','A grid without the chosen component (such as an iso-only cube) now switches to a component it has (the plot dimensions used to break).'] },
   { date:'2026-10-24', version:'ver31', ja:['gzip で圧縮したファイル（.log.gz・.txt.gz・.fchk.gz など）を、ドロップ・ファイルの選択・「フォルダ」からそのまま開けるようにしました。','NICS の点計算のカードで、3D の番号と値を別々に入/切できるようにし、表は「色分け」で選んだ成分の列だけにしました。負・正の色を変える「配色」も足しました（2D NICS と共通）。','NICS の成分の下付き（xx・yy・zz）を斜体にしました。','3D 表示の「画像の保存」「コピー」を右上へ移しました。ジョブの切り替えがあるログでは、その帯の右端に並びます。帯の下の線はなくしました。','ブラウザのタブのアイコンを、画面と同じ緑にしました。','左パネルの「点群（Gaussian）」を「点群」にし、表示中の構造に対応する記録のときに出ていた注記をなくしました。','役目の薄い説明文を外しました（NICS・環電流・GIMIC・⟨S²⟩・スピン・フォルダ・画像の保存・元素の色・画面の動き・自動で開く・通知・対称化）。'], en:['Gzip-compressed files (.log.gz, .txt.gz, .fchk.gz, …) can now be opened directly by dropping, choosing a file, or from the Folder section.','On the NICS point card, the 3D numbers and values now switch on and off separately, and the table shows only the component chosen under Colour by. Added Colours to set the negative and positive colours (shared with 2D NICS).','NICS component subscripts (xx, yy, zz) are now italic.','Moved the 3D view\'s Save image and Copy buttons to the top right; for logs with a job selector they sit at the right end of that strip, and the line below the strip is gone.','The browser tab icon now uses the same green as the app.','"Point group (Gaussian)" in the left panel is now "Point group", and the note shown when the record matches the displayed geometry is gone.','Removed explanatory notes that carried little information (NICS, ring current, GIMIC, ⟨S²⟩, spin, Folder, Save image, element colours, motion, reopen files, notifications, symmetrise).'] },
@@ -25001,6 +25242,7 @@ function renderManual(){
       <li>座標だけのファイル（.mol / .sdf・.xyz・.gjf / .com）は、構造を読み込んで「編集」タブに着地します。<b>.xyz は複数フレーム（軌跡）</b>も読み、「最適化」タブでコマ送り・再生できます。2行目のコメントにエネルギーが書かれていれば、グラフにも出ます。.gjf / .com はルート行から手法・基底関数を、電荷・多重度の行とあわせて読み取ります（<b>デカルト座標のみ</b>。Z-matrix には対応していません）。</li>
       <li><b>手元のフォルダ</b>の中身を一覧から開けます。左パネルの「フォルダ」で<b>フォルダを選択</b>をクリックすると、そのフォルダの中の .log / .out・.fchk・.mol / .xyz / .gjf が一覧に出ます（フォルダ名をクリックすると下の階層へ、上の「/」で区切られた道をクリックすると戻れます）。クリックしたファイルだけを読み込むので、フォルダが大きくても一覧はすぐ出ます。同じ名前の .fchk があるログには「+ fchk」が付き、一緒に読み込まれます。一覧は<b>名前順</b>と<b>更新が新しい順</b>を選べます。フォルダは<b>何個でも開いておけます</b>。見出しの右の ＋ で足すと、いちばん上の階層に開いているフォルダが並び、クリックすると中へ、<code>..</code> でその一覧へ戻ります。行の × で一覧から外せます（開いているファイルはそのままです）。同じ名前のフォルダをもう一度選んだときは増やさず、中身を取り直します。<b>フォルダはウィンドウにドロップしても同じ一覧になります</b>（こちらは「N 個のファイルをアップロードしますか？」の確認が出ません）。フォルダと単体のファイルを一緒に落とすと、ファイルはこれまでどおり開き、フォルダは一覧になります。フォルダは2つ以上まとめて落とせます。ブラウザはフォルダの場所を覚えられないので、ページを開き直すと選び直しになります。また、計算が進んで新しい .log が増えても自動では出ません（もう一度フォルダを選んでください）。フォルダを選ぶときにブラウザが「N 個のファイルをアップロードしますか？」と尋ねますが、中身はこのページの中だけで読まれ、どこにも送られません。</li>
       <li><b>計算サーバー上のファイル</b>も直接開けます。<b>計算ディレクトリで</b> <code>python3 -m http.server --bind 127.0.0.1 8731</code> を動かし、index.html は<b>その下のサブフォルダ</b>（例：<code>glv/</code>）に置きます。index.html と同じ階層を配信すると、http.server が一覧の代わりにそのページを返してしまいます。手元から <code>ssh -L 8731:127.0.0.1:8731 ユーザー名@サーバー</code> でつないで <code>http://localhost:8731/glv/index.html</code> を開きます。左パネルの「サーバー」にファイル一覧が出るので、そこからログを選べます。同じ名前の .fchk があるログには「+ fchk」が付き、一緒に読み込まれます。一覧は<b>名前順</b>と<b>更新が新しい順</b>を選べ（フォルダ名の右のプルダウン）、別の画面から戻ってくると自動で取り直します。共有のサーバーでは <code>--bind 127.0.0.1</code> を必ず付けてください（付けないと同じネットワークの誰でもそのフォルダを読めます）。<code>http.server</code> の代わりに <code>serve.py</code>（<code>bjobs</code> の結果も返す小さなサーバー）を動かすと、走っているジョブの一覧（「キュー」タブ）も見られます。</li>
+      <li>GAMESS の SF-TDDFT・MRSF-TDDFT ログでは、左の「計算条件」に手法と汎関数を別々に表示します。座標があれば「構造」タブを開けます。構造最適化ログは「最適化」タブで開き、履歴が2点以上あればグラフを表示します。GAMESS の入力点群と対称性の利用設定は「計算条件」に表示されます。ログに記録した入力は、左の「入力設定」を開くと確認できます。</li>
       <li>GAMESS の MRSF-TDDFT（1点計算）のログも開けます。構造と「スペクトル」タブを表示し、励起エネルギーと振動子強度は最も低い状態（一重項なら S0）を基準にします。遷移の軌道は ROHF の番号に HOMO / SOMO / LUMO を添えて示します。</li>
       <li>複数のファイルを開くと、<b>左パネルの「ファイル」</b>に1行ずつ並びます。行をクリックで切り替え、×で閉じます。上の ＋ で別のファイルを開けます。</li>
       <li>ページを開くと、最後に開いたファイルが自動で読み込まれます。「設定」タブの<b>起動時</b>でオフにできます。</li>
@@ -25019,6 +25261,8 @@ function renderManual(){
       <li><b>文字のふち（結合長）</b>：結合長の文字に付ける背景色の縁取りの入／切です。縁取りは下の線を切って文字を読みやすくしますが、込み合った図で隣の文字や破線まで削るときは切ってください。</li>
       <li><b>正投影</b>は最初から入っています。結合長や角度が見た目で歪まないので、図として持ち出すときはこのままにしてください。切ると遠近が付き、奥行きが分かります。</li>
       <li>ラベル・視点・慣性の切り替え、画像保存（<kbd>${MOD}</kbd>+<kbd>S</kbd>）、クリップボードへのコピー（<kbd>${MOD}</kbd>+<kbd>C</kbd>。形式と解像度の設定によらず最高解像度のPNG）も可能。<b>ズームの速さ</b>のスライダーで、ホイール1目盛りの効きを変えられます。</li>
+      <li>Formula（構造式）で「水素原子を表示」をオンにすると、結合している水素を H と結合線で個別に描きます。既定はオフで、選択は保存されます。</li>
+      <li>すべての表示スタイルで「奥行きの濃淡」を使えます。奥の原子や結合を薄くし、Formula（構造式）では元素記号にも効きます。Formula では「奥行きの線幅」も併用できます。既定は両方オフで、選択は保存されます。</li>
       <li>結合長と文字のふちは「構造」タブ、それ以外は「設定」タブにあります。各カードは見出しをクリックすると畳めます（開閉の状態は保存されます）。<b>表示スタイル・座標軸（設定を含む）・原子ラベル・結合長（設定を含む）・正投影・回転の慣性・ズームの速さ・結合次数・画像の保存の設定は、次にページを開いたときもそのままです。</b></li>
       <li><b>ジョブ</b>：<code>--Link1--</code> で複数のジョブが続くログ（<code>opt freq</code> の振動計算や、同じファイルへ追記した再投入も1ジョブずつ数えます）では、3D表示の上に「ジョブ」の帯が出ます。番号をクリックすると、そのジョブだけを読み直して表示します（手法・電荷/多重度・構造・振動・軌道・電荷・熱化学・終了状態がすべてそのジョブのものになります）。「全体」では構造最適化の経過のグラフを全ジョブつなげて描き、境目に線とジョブ番号を入れます。3D などの値は最後のジョブのものです。エラーで終わったジョブは赤い文字で出ます。ボタンにマウスを乗せると、そのジョブの手法と終了状態が出ます。ジョブが1つのログでは帯は出ません。</li>
     </ul>
@@ -25118,6 +25362,7 @@ cubegen 0 potential=scf x.fchk esp.cube  0 h</pre>
     <p>「設定」タブの「言語・ショートカット」で言語（日本語/EN）を切り替えられます。<kbd>ショートカット</kbd>ボタンで一覧を確認できます。</p>
     <p>設定パネルは、横幅に余裕があると2列、狭いと1列で表示します。</p>
     <p><b>グラフのスタイル</b>：グラフの見た目をまとめて決めます。<b>目盛り</b>は<b>外向き</b>／<b>内向き</b>／<b>なし</b>、<b>補助目盛</b>のスライダーは主目盛の間を何等分するか（1 のときは補助目盛なし）。<b>文字の大きさ</b>は 6〜18px（既定 12px）、<b>余白</b>は軸の値と軸名が入る枠の広さで、100 % が文字の大きさから決まる基準の広さです（既定は 95 %）。エネルギー・⟨S²⟩・最適化・結合長・角度と二面角・IR・吸収スペクトルのすべてのグラフに同時に効き、書き出した PNG / SVG / PDF にもそのまま入ります。エネルギーの縦軸名は、軸の長さに入らないときは「/」の前で2行に折ります。文字を大きくしすぎると軸名は自動で縮み、横軸の値は間引かれます。</p>
+    <p>動きの速さは「動きをつけて切り替える」の行の「設定」から調整します。ズームの速さはその下のスライダーで調整します。</p>
     <p><b>操作</b>：<b>動きをつけて切り替える</b>を入れると、視点の切り替え（±X / ±Y / ±Z・視点を既定に戻す・ファイルを切り替えたときの視点の復元）が回り込みながら動き、左パネルのファイルが増えたり閉じたりする行、節やカードの開閉、右パネルのタブの切り替えにも短い動きが付きます。表示スタイル（Ball &amp; Stick / Spacefill / Stick）の切り替えでは原子と結合の太さが伸び縮みし、座標軸と双極子の矢印は薄く出し入れされます。3D の上のボタンから「設定」タブの項目へ飛ぶときと、「構造解析」タブで結合を並べ替えるときにも効きます。<b>動きの速さ</b>（×0.5〜×2.0）で全体の速さを変えられます。切ると、すべて従来どおり瞬間に切り替わります。3Dを回している間（ドラッグ・ホイール）には掛かりません。OS で「視差効果を減らす」を選んでいるときは、はじめから切れています。</p>
     <p><b>再生</b>：スキャン・構造最適化・「実行状況」タブのグラフの歯車で開く設定ウィンドウの先頭にあり、再生の<b>1 コマの長さ</b>（60〜600 ms）を決めます。短いほど速く動きます。3つのグラフで共通で、次に開いたときも覚えています。振動のアニメーションの速さは「振動」タブで別に決めます。</p>
     <p class="m-note">設定（色・しきい値など）はブラウザに保存され、次回も保持されます。</p>
@@ -25137,6 +25382,7 @@ cubegen 0 potential=scf x.fchk esp.cube  0 h</pre>
       <li>Coordinate-only files (.mol / .sdf, .xyz, .gjf / .com) load their structure and land on the Edit tab. <b>Multi-frame .xyz trajectories</b> are read as well and can be stepped through or played on the Optimization tab; an energy written in the comment line is plotted. From a .gjf / .com the route line gives the method and basis set, together with the charge and multiplicity line (<b>Cartesian coordinates only</b>; Z-matrix input is not supported).</li>
       <li><b>A folder on your own machine</b> can be browsed as a list. Press <b>Select folder</b> under <b>Folder</b> in the left panel and the .log / .out, .fchk and .mol / .xyz / .gjf files inside it are listed (click a folder name to go deeper, or a segment of the path above to come back). Only the file you click is read, so even a large folder lists instantly. A log with a same-named .fchk is marked “+ fchk” and opens together with it, and the list can be sorted <b>by name</b> or <b>newest first</b>. You can keep <b>as many folders open as you like</b>: ＋ in the section heading adds one, the top level lists the folders you have opened, clicking one goes in and <code>..</code> comes back, and × on a row removes it (files you have open stay open). Choosing a folder of the same name again reloads it rather than adding it twice. <b>Dropping a folder onto the window lists it the same way</b>, and that route has no “Upload N files?” confirmation. Drop a folder together with loose files and the files open as usual while the folder is listed; and you can drop several folders at once. A browser cannot remember where the folder was, so you choose it again after reloading the page; new .log files written since you chose it do not appear on their own either (choose the folder again). The browser asks “Upload N files?” when you choose a folder — the contents are only read inside this page and are never sent anywhere.</li>
       <li><b>Files on a calculation server</b> can be opened directly. Run <code>python3 -m http.server --bind 127.0.0.1 8731</code> <b>in the calculation directory</b> and keep index.html in a <b>subfolder of it</b> (e.g. <code>glv/</code>); served from the same folder, http.server returns the page instead of a listing. Connect with <code>ssh -L 8731:127.0.0.1:8731 user@server</code> and open <code>http://localhost:8731/glv/index.html</code>. The server listing appears under <b>Server</b> in the left panel, sorted <b>by name</b> or <b>newest first</b> (the dropdown next to the folder path), and refreshes itself when you come back to the tab. A log with a same-named .fchk is marked “+ fchk” and opens together with it. On a shared machine always pass <code>--bind 127.0.0.1</code>, or anyone on the network can read that folder. Running <code>serve.py</code> (a small server that also answers with <code>bjobs</code>) instead of <code>http.server</code> also gives you the list of running jobs (the Queue tab).</li>
+      <li>For GAMESS SF-TDDFT and MRSF-TDDFT logs, the calculation conditions list the method and functional separately. The Structure tab is available when the log contains coordinates. Geometry optimization logs open on the Optimization tab. The plot appears once two steps are available. The calculation conditions show the GAMESS input point group and symmetry setting. Open Input settings in the sidebar to read the input echoed in the GAMESS log.</li>
       <li>GAMESS MRSF-TDDFT single-point logs also open. The structure and the Spectrum tab are shown; excitation energies and oscillator strengths are measured from the lowest state (S0 for singlets). Orbitals in transitions are ROHF numbers labelled HOMO / SOMO / LUMO.</li>
       <li>Open files are listed one per row under <b>Files</b> in the left panel. Click a row to switch, × to close, and ＋ at the top to open another.</li>
       <li>The last file you opened is loaded automatically when the page opens. Turn this off under <b>On startup</b> in the Display tab.</li>
@@ -25146,6 +25392,7 @@ cubegen 0 potential=scf x.fchk esp.cube  0 h</pre>
     <h3>3D viewer</h3>
     <ul>
       <li><b>Controls</b>: left-drag = rotate, right-drag = pan, scroll = zoom, ${ALT}+left = roll. The rotation does not stop at the top or the bottom.</li>
+      <li>Adjust transition speed through Settings on the Animate transitions row. The zoom speed slider is directly below that row.</li>
       <li>Added Wireframe to display styles: bonds are thin element-coloured lines, with no atom spheres.</li>
       <li><b>Display style</b>: switch between Ball-Stick / Spacefill / Stick and two flat styles — <b>Formula</b> (ChemDraw-like: black lines, no carbons or C–H hydrogens, heteroatoms as symbols, multiple bonds always as parallel lines; “Colour element symbols” adds colour) and <b>Flat</b> (py.Aroma-like: thin grey rods and outlined circles). The flat styles can still be rotated; lines get thicker as you zoom in.</li>
       <li><b>Bond order</b> (dashed-line icon): infers single/1.5/double/triple from bond length. In rings, 1.5 bonds get an inner dashed line and double bonds an inner solid line (double bonds can be switched to two parallel lines). Thresholds and target elements (e.g. carbon only) are configurable. A bond shared by two rings gets its inner line in the ring with more 1.5 bonds. With <b>Click a bond to switch its line side</b> on, each click on a bond moves its inner line to the other side (a double bond outside rings cycles centre → one side → the other). The choices are remembered per file, and “Reset all to automatic” clears them.</li>
@@ -25155,6 +25402,8 @@ cubegen 0 potential=scf x.fchk esp.cube  0 h</pre>
       <li><b>Text halo (bond lengths)</b>: turns the background-coloured outline around the bond-length text on or off. The halo cuts the lines underneath so the text stays legible; turn it off when, in a crowded picture, it also clips neighbouring text or dashed bonds.</li>
       <li><b>Orthographic</b> is on from the start, so lengths and angles are not visually distorted — keep it on for figures. Turn it off for perspective and a sense of depth.</li>
       <li>Toggle labels, viewpoint and inertia; save an image with <kbd>${MOD}</kbd>+<kbd>S</kbd>, or copy it to the clipboard with <kbd>${MOD}</kbd>+<kbd>C</kbd> (always a maximum-resolution PNG, whatever the format and resolution settings say). The <b>Zoom speed</b> slider sets how far one wheel notch zooms.</li>
+      <li>In Formula style, turn on Show hydrogen atoms to draw each bonded hydrogen at its own position with an H label and bond line. This is off by default, and your choice is saved.</li>
+      <li>Depth shading softens distant atoms and bonds in all display styles, including element symbols in Formula. Formula also supports Depth line width, which can be used alongside shading. Both are off by default, and your choices are saved.</li>
       <li>Bond lengths and their text halo live on the Structure tab; the other options live on the Settings tab. Click a card’s heading to collapse or expand it (the state is remembered). <b>The display style, axes (including their settings), atom labels, bond lengths (including their settings), orthographic projection, rotation inertia, zoom speed, bond orders and the image-saving options are kept for the next time you open the page.</b></li>
       <li><b>Job</b>: for a log with several jobs chained by <code>--Link1--</code> (the frequency step of <code>opt freq</code> and re-runs appended to the same file each count as a job), a Job bar appears above the 3D view. Click a number to re-read and show just that job — method, charge/multiplicity, structure, vibrations, orbitals, charges, thermochemistry and termination all come from it. <b>All</b> draws the optimization plot through every job, with a line and the job number at each boundary; the 3D view and the other values are from the last job. A job that ended in an error is shown in red. Hover a button to see that job’s method and termination. Logs with a single job have no Job bar.</li>
     </ul>
